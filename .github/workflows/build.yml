@@ -111,5 +111,4 @@ jobs:
           
           gh release create "$TAG" *.xbps *-repodata \
             --title "Umbriel $TAG" \
-            --notes "Compilação automatizada para Void Linux (x86_64).
-Commit upstream: https://github.com/noctalia-dev/umbriel/commit/$SHA"
+            --notes "Compilação automatizada para Void Linux (x86_64). Commit upstream: https://github.com/noctalia-dev/umbriel/commit/$SHA"
