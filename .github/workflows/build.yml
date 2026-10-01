@@ -1,0 +1,115 @@
+name: Build and Release Umbriel
+
+on:
+  schedule:
+    # Roda automaticamente todos os dias às 04:00 UTC (01:00 BRT)
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    # Permite disparar manualmente pelo botão "Run workflow" no GitHub
+    inputs:
+      force_build:
+        description: 'Forçar compilação mesmo se a versão já existir nas Releases'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-umbriel:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/void-linux/void-glibc-full:latest
+      options: --privileged
+
+    steps:
+      - name: 1. Atualizar sistema do container e instalar utilitários
+        run: |
+          xbps-install -Syu || xbps-install -u xbps
+          xbps-install -y git bash curl tar xz github-cli
+
+      - name: 2. Clonar este repositório (template customizado)
+        run: |
+          git clone --depth 1 "https://github.com/${{ github.repository }}.git" /custom-repo
+
+      - name: 3. Verificar atualizações no upstream do Umbriel
+        id: check_upstream
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_BUILD: ${{ inputs.force_build }}
+        run: |
+          UPSTREAM_URL="https://github.com/noctalia-dev/umbriel.git"
+          
+          # Obter commit SHA mais recente da branch main
+          LATEST_SHA=$(git ls-remote "$UPSTREAM_URL" HEAD | awk '{print $1}')
+          SHORT_SHA=$(echo "$LATEST_SHA" | cut -c1-8)
+          
+          # Obter data do commit via API ou fallback para data atual
+          COMMIT_DATE=$(curl -s "https://api.github.com/repos/noctalia-dev/umbriel/commits/$LATEST_SHA" | grep '"date":' | head -n1 | cut -d'"' -f4 | cut -d'T' -f1 | tr -d '-' || true)
+          if [ -z "$COMMIT_DATE" ]; then
+            COMMIT_DATE=$(date +'%Y%m%d')
+          fi
+          
+          RELEASE_TAG="0.1.0git${COMMIT_DATE}-${SHORT_SHA}"
+          echo "tag=${RELEASE_TAG}" >> $GITHUB_OUTPUT
+          echo "commit_sha=${LATEST_SHA}" >> $GITHUB_OUTPUT
+          echo "commit_date=${COMMIT_DATE}" >> $GITHUB_OUTPUT
+          
+          # Verifica se a Release já existe
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1 && [ "$FORCE_BUILD" != "true" ]; then
+            echo "Release $RELEASE_TAG já existe e não foi forçada recompilação."
+            echo "build_needed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Nova versão detectada ou compilação forçada ($RELEASE_TAG)."
+            echo "build_needed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 4. Clonar void-packages e configurar xbps-src
+        if: steps.check_upstream.outputs.build_needed == 'true'
+        run: |
+          git clone --depth 1 https://github.com/void-linux/void-packages.git /void-packages
+          cd /void-packages
+          
+          # Copiar nosso template do umbriel
+          cp -r /custom-repo/srcpkgs/umbriel /void-packages/srcpkgs/
+          
+          # Ajustar versão no template para refletir a data do commit
+          COMMIT_DATE="${{ steps.check_upstream.outputs.commit_date }}"
+          sed -i "s/^version=.*/version=0.1.0git${COMMIT_DATE}/" /void-packages/srcpkgs/umbriel/template
+          
+          # Permitir execução do chroot dentro do container do GitHub Actions
+          echo "XBPS_ALLOW_CHROOT_BREAKOUT=yes" >> etc/conf
+          
+          # Inicializar o masterdir do xbps-src
+          ./xbps-src binary-bootstrap
+
+      - name: 5. Compilar pacote XBPS
+        if: steps.check_upstream.outputs.build_needed == 'true'
+        working-directory: /void-packages
+        run: |
+          ./xbps-src pkg umbriel
+
+      - name: 6. Gerar índice do repositório XBPS
+        if: steps.check_upstream.outputs.build_needed == 'true'
+        working-directory: /void-packages/hostdir/binpkgs
+        run: |
+          xbps-rindex -a *.xbps
+
+      - name: 7. Publicar Release no GitHub
+        if: steps.check_upstream.outputs.build_needed == 'true'
+        working-directory: /void-packages/hostdir/binpkgs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.check_upstream.outputs.tag }}"
+          SHA="${{ steps.check_upstream.outputs.commit_sha }}"
+          
+          # Se já existir release com a mesma tag (em caso de force_build), remove para recriar
+          gh release delete "$TAG" -y || true
+          git tag -d "$TAG" || true
+          
+          gh release create "$TAG" *.xbps *-repodata \
+            --title "Umbriel $TAG" \
+            --notes "Compilação automatizada para Void Linux (x86_64).
+Commit upstream: https://github.com/noctalia-dev/umbriel/commit/$SHA"

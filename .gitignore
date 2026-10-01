@@ -1,0 +1,9 @@
+*.xbps
+*-repodata
+*.tar.gz
+*.tar.xz
+.xbps-*
+hostdir/
+masterdir/
+builddir/
+destdir/
