@@ -57,7 +57,7 @@ jobs:
           echo "commit_date=${COMMIT_DATE}" >> $GITHUB_OUTPUT
           
           # Verifica se a Release já existe
-          if gh release view "$RELEASE_TAG" >/dev/null 2>&1 && [ "$FORCE_BUILD" != "true" ]; then
+          if gh release view "$RELEASE_TAG" --repo "${{ github.repository }}" >/dev/null 2>&1 && [ "$FORCE_BUILD" != "true" ]; then
             echo "Release $RELEASE_TAG já existe e não foi forçada recompilação."
             echo "build_needed=false" >> $GITHUB_OUTPUT
           else
@@ -104,11 +104,12 @@ jobs:
         run: |
           TAG="${{ steps.check_upstream.outputs.tag }}"
           SHA="${{ steps.check_upstream.outputs.commit_sha }}"
+          REPO="${{ github.repository }}"
           
           # Se já existir release com a mesma tag (em caso de force_build), remove para recriar
-          gh release delete "$TAG" -y || true
-          git tag -d "$TAG" || true
+          gh release delete "$TAG" --repo "$REPO" -y --cleanup-tag || true
           
           gh release create "$TAG" *.xbps *-repodata \
+            --repo "$REPO" \
             --title "Umbriel $TAG" \
             --notes "Compilação automatizada para Void Linux (x86_64). Commit upstream: https://github.com/noctalia-dev/umbriel/commit/$SHA"
