@@ -62,15 +62,15 @@ Para que o GitHub Actions consiga criar as Releases com os binários:
 Quando uma nova release for publicada, você pode instalar diretamente apontando o `xbps-install` para a URL da Release:
 
 ```bash
-# Substitua SEU_USUARIO e A_TAG_DA_RELEASE
-sudo xbps-install --repository=https://github.com/SEU_USUARIO/umbriel-void/releases/download/0.1.0gitYYYYMMDD-XXXXXXXX/ -u umbriel
+# Substitua A_TAG_DA_RELEASE
+sudo xbps-install --repository=https://github.com/Wiljapa/umbriel-void/releases/download/0.1.0gitYYYYMMDD-XXXXXXXX/ -u umbriel
 ```
 
 Ou, se preferir baixar o arquivo `.xbps` e adicionar à sua pasta local `~/void_pacotes`:
 
 ```bash
 cd ~/void_pacotes
-curl -LO https://github.com/SEU_USUARIO/umbriel-void/releases/latest/download/umbriel-0.1.0git...x86_64.xbps
+curl -LO https://github.com/Wiljapa/umbriel-void/releases/latest/download/umbriel-0.1.0git...x86_64.xbps
 xbps-rindex -a *.xbps
 sudo xbps-install -R $PWD -u umbriel
 ```
