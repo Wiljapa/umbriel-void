@@ -17,26 +17,37 @@ Este repositório compila automaticamente novas versões na nuvem (via GitHub Ac
 
 ---
 
-## ⚡ Instalação Rápida
+## ⚡ Como Instalar
 
-Para instalar ou atualizar para a versão mais recente no **Void Linux (glibc x86_64)**, basta rodar um único comando no terminal:
+Você pode instalar o Umbriel de duas formas: como repositório nativo do Void Linux (recomendado para receber atualizações automáticas do sistema) ou via script em 1 linha.
+
+### Método 1: Repositório Nativo do XBPS (Recomendado)
+Adicione o repositório nas configurações do Void Linux. Dessa forma, **sempre que você rodar `sudo xbps-install -Syu`, o Umbriel será atualizado automaticamente junto com o sistema!**
+
+```bash
+# 1. Adicionar o repositório na configuração do XBPS
+echo "repository=https://wiljapa.github.io/umbriel-void" | sudo tee /etc/xbps.d/20-umbriel.conf
+
+# 2. Sincronizar e instalar (pressione 'Y' para aceitar a chave do repositório)
+sudo xbps-install -Syu umbriel
+```
+
+---
+
+### Método 2: Script em Linha Única
+Se preferir instalar sem adicionar o repositório permanente:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/Wiljapa/umbriel-void/main/install.sh | bash
 ```
 
-> **O que este script faz:**
-> 1. Consulta a API do GitHub e descobre o arquivo `.xbps` da release mais recente.
-> 2. Baixa o pacote para um diretório temporário.
-> 3. Executa `sudo xbps-install --repository=... -u umbriel` (o XBPS resolve e baixa todas as dependências oficiais automaticamente).
+---
 
-### Alternativa: Download Manual
-Se preferir baixar manualmente sem usar o script:
-1. Baixe o pacote `.xbps` diretamente na página de **[Releases](https://github.com/Wiljapa/umbriel-void/releases/latest)**.
-2. Na pasta do download, execute:
-   ```bash
-   sudo xbps-install --repository=$PWD -u umbriel
-   ```
+### Método 3: Download Manual
+Baixe o pacote `.xbps` diretamente na página de **[Releases](https://github.com/Wiljapa/umbriel-void/releases/latest)** e instale:
+```bash
+sudo xbps-install --repository=$PWD -u umbriel
+```
 
 ---
 

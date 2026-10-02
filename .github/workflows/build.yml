@@ -96,7 +96,41 @@ jobs:
         run: |
           xbps-rindex -a *.xbps
 
-      - name: 7. Publicar Release no GitHub
+      - name: 7. Assinar repositório e atualizar GitHub Pages
+        if: steps.check_upstream.outputs.build_needed == 'true'
+        working-directory: /void-packages/hostdir/binpkgs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SIGNING_KEY: ${{ secrets.XBPS_SIGNING_KEY }}
+        run: |
+          # Usar chave secreta se configurada, ou gerar chave para assinatura
+          if [ -n "$SIGNING_KEY" ]; then
+            echo "$SIGNING_KEY" > /tmp/xbps_rsa
+            chmod 600 /tmp/xbps_rsa
+          else
+            openssl genrsa -out /tmp/xbps_rsa 2048
+            chmod 600 /tmp/xbps_rsa
+          fi
+          
+          # Assinar repositório e pacotes
+          xbps-rindex --privkey /tmp/xbps_rsa --signedby "Wiljapa <wiljp@gmail.com>" --sign .
+          xbps-rindex --privkey /tmp/xbps_rsa --sign-pkg *.xbps
+          
+          # Atualizar branch gh-pages
+          git clone --depth 1 --branch gh-pages "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" /gh-pages
+          cp *.xbps *.sig2 *-repodata /gh-pages/
+          touch /gh-pages/.nojekyll
+          
+          cd /gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: auto-update xbps repository (${{ steps.check_upstream.outputs.tag }})"
+            git push origin gh-pages
+          fi
+
+      - name: 8. Publicar Release no GitHub
         if: steps.check_upstream.outputs.build_needed == 'true'
         working-directory: /void-packages/hostdir/binpkgs
         env:
