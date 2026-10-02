@@ -15,63 +15,86 @@ Este repositório compila automaticamente novas versões na nuvem (via GitHub Ac
 
 ## ⚡ Instalação Rápida
 
-Para instalar a versão estável mais recente em qualquer máquina com **Void Linux (glibc x86_64)**:
-
-### Opção 1: Comando automático em 2 passos
-
-Abra o terminal e execute:
+Para instalar ou atualizar para a versão mais recente no **Void Linux (glibc x86_64)**, basta rodar um único comando no terminal:
 
 ```bash
-# 1. Baixar o pacote binário mais recente da release
-curl -s https://api.github.com/repos/Wiljapa/umbriel-void/releases/latest \
-  | grep "browser_download_url.*\.xbps" \
-  | cut -d : -f 2,3 \
-  | tr -d \" \
-  | wget -qi -
-
-# 2. Instalar (o XBPS resolve e baixa todas as dependências oficiais automaticamente)
-sudo xbps-install --repository=$PWD -u umbriel
+curl -sSL https://raw.githubusercontent.com/Wiljapa/umbriel-void/main/install.sh | bash
 ```
 
-### Opção 2: Download manual
-1. Acesse a aba **[Releases](https://github.com/Wiljapa/umbriel-void/releases/latest)**.
-2. Baixe o arquivo `umbriel-*.x86_64.xbps`.
-3. Na pasta onde o arquivo foi baixado, rode:
+> **O que este script faz:**
+> 1. Consulta a API do GitHub e descobre o arquivo `.xbps` da release mais recente.
+> 2. Baixa o pacote para um diretório temporário.
+> 3. Executa `sudo xbps-install --repository=... -u umbriel` (o XBPS resolve e baixa todas as dependências oficiais automaticamente).
+
+### Alternativa: Download Manual
+Se preferir baixar manualmente sem usar o script:
+1. Baixe o pacote `.xbps` diretamente na página de **[Releases](https://github.com/Wiljapa/umbriel-void/releases/latest)**.
+2. Na pasta do download, execute:
    ```bash
    sudo xbps-install --repository=$PWD -u umbriel
    ```
 
 ---
 
-## 🚀 Pós-Instalação e Configuração
+## 🎨 Integração com o Noctalia Desktop Shell
 
-### 1. Criar o arquivo de configuração padrão
-Copie o modelo de configuração fornecido para o seu diretório de usuário:
+O Umbriel foi desenhado pelos mesmos criadores do **[Noctalia Shell](https://github.com/noctalia-dev/noctalia)** (barra de status, launcher de apps, notificações, wallpaper e painéis do sistema). 
 
-```bash
-mkdir -p ~/.config/umbriel
-cp /usr/share/umbriel/config.toml ~/.config/umbriel/
+Se você utiliza o Noctalia, configure seu `~/.config/umbriel/config.toml` desta forma:
+
+### 1. Inicialização automática (Autostart)
+Abra o arquivo `~/.config/umbriel/config.toml` e adicione o `noctalia` e o servidor de áudio/input no bloco `[general]`:
+
+```toml
+[general]
+autostart = [
+    "noctalia",        # Inicia a barra, notificações e wallpaper do Noctalia
+    "pipewire",        # Servidor de áudio
+    "wireplumber",     # Gerenciador de sessão multimídia
+    "pipewire-pulse",  # Compatibilidade com PulseAudio
+]
 ```
 
-### 2. Validar a configuração
-Antes de iniciar, você pode validar se sua sintaxe está correta:
+### 2. Atalhos para controlar o Noctalia
+No bloco `[keybinds]`, adicione atalhos para abrir o menu de aplicativos (launcher) e terminal:
+
+```toml
+[keybinds]
+# Abrir o terminal (ex: kitty, foot, alacritty)
+"Mod+Return" = { action = "spawn:kitty", repeat = false }
+
+# Abrir / fechar o Launcher do Noctalia ao pressionar a tecla Super (Windows)
+"Mod" = "spawn:noctalia msg panel-toggle launcher"
+
+# Fechar janela ativa
+"Mod+Q" = { action = "window-close", repeat = false }
+
+# Sair da sessão
+"Mod+Escape" = "session-quit"
+```
+
+### 3. Validar a configuração
+Sempre que fizer alterações no seu `config.toml`, teste a sintaxe executando:
 
 ```bash
 umbriel validate
 ```
 
-### 3. Iniciar o Umbriel
+---
+
+## 🚀 Como Iniciar o Umbriel
+
 Você pode iniciar o compositor de duas maneiras:
 
-- **Via TTY (Terminal limpo):**
-  Faça login em um TTY (ex: `Ctrl + Alt + F2`) e execute:
+- **Via TTY (Linha de comando):**
+  Faça login em um TTY limpo (ex: `Ctrl + Alt + F2`) e execute:
   ```bash
   start-umbriel
   ```
   *(O `start-umbriel` configura as variáveis de ambiente necessárias do Wayland e inicia a sessão)*.
 
 - **Via Display Manager (Login gráfico):**
-  O pacote já instala a entrada para sessões Wayland em `/usr/share/wayland-sessions/umbriel.desktop`. Basta selecionar **Umbriel** no seu gerenciador de login (ex: SDDM, Greetd, GDM, LightDM).
+  O pacote já instala a sessão em `/usr/share/wayland-sessions/umbriel.desktop`. Basta selecionar **Umbriel** no seu gerenciador de login (ex: SDDM, Greetd, GDM).
 
 ---
 
