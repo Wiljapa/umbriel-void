@@ -22,6 +22,8 @@ jobs:
     container:
       image: ghcr.io/void-linux/void-glibc-full:latest
       options: --privileged
+    env:
+      XBPS_ALLOW_CHROOT_BREAKOUT: "yes"
 
     steps:
       - name: 1. Atualizar sistema do container e instalar utilitários
@@ -45,8 +47,8 @@ jobs:
           LATEST_SHA=$(git ls-remote "$UPSTREAM_URL" HEAD | awk '{print $1}')
           SHORT_SHA=$(echo "$LATEST_SHA" | cut -c1-8)
           
-          # Obter data do commit via API ou fallback para data atual
-          COMMIT_DATE=$(curl -s "https://api.github.com/repos/noctalia-dev/umbriel/commits/$LATEST_SHA" | grep '"date":' | head -n1 | cut -d'"' -f4 | cut -d'T' -f1 | tr -d '-' || true)
+          # Obter data do commit via API autenticada (evita rate limit) ou fallback para data atual
+          COMMIT_DATE=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/noctalia-dev/umbriel/commits/$LATEST_SHA" | grep '"date":' | head -n1 | cut -d'"' -f4 | cut -d'T' -f1 | tr -d '-' || true)
           if [ -z "$COMMIT_DATE" ]; then
             COMMIT_DATE=$(date +'%Y%m%d')
           fi
@@ -76,7 +78,7 @@ jobs:
           
           # Ajustar versão no template para refletir a data do commit
           COMMIT_DATE="${{ steps.check_upstream.outputs.commit_date }}"
-          sed -i "s/^version=.*/version=0.1.0git${COMMIT_DATE}/" /void-packages/srcpkgs/umbriel/template
+          sed -i "s/^[[:space:]]*version=.*/version=0.1.0git${COMMIT_DATE}/" /void-packages/srcpkgs/umbriel/template
           
           # Permitir execução do chroot dentro do container do GitHub Actions
           echo "XBPS_ALLOW_CHROOT_BREAKOUT=yes" >> etc/conf
@@ -116,8 +118,15 @@ jobs:
           xbps-rindex --privkey /tmp/xbps_rsa --signedby "Wiljapa <wiljp@gmail.com>" --sign .
           xbps-rindex --privkey /tmp/xbps_rsa --sign-pkg *.xbps
           
-          # Atualizar branch gh-pages
-          git clone --depth 1 --branch gh-pages "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" /gh-pages
+          # Atualizar branch gh-pages com fallback seguro
+          if ! git clone --depth 1 --branch gh-pages "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" /gh-pages; then
+            mkdir -p /gh-pages
+            cd /gh-pages
+            git init
+            git checkout -b gh-pages
+            git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          fi
+          
           cp *.xbps *.sig2 *-repodata /gh-pages/
           touch /gh-pages/.nojekyll
           
