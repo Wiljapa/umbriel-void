@@ -1,76 +1,119 @@
-# Umbriel Void Linux - CI/CD Automatizado
+# Umbriel para Void Linux (x86_64)
 
-Repositório para compilação automatizada do compositor Wayland **Umbriel** para **Void Linux** (x86_64) utilizando GitHub Actions e `xbps-src`.
+[![Build and Release Umbriel](https://github.com/Wiljapa/umbriel-void/actions/workflows/build.yml/badge.svg)](https://github.com/Wiljapa/umbriel-void/actions/workflows/build.yml)
+[![Latest Release](https://img.shields.io/github/v/release/Wiljapa/umbriel-void?color=blue&label=release)](https://github.com/Wiljapa/umbriel-void/releases/latest)
+[![Void Linux](https://img.shields.io/badge/Void_Linux-x86__64-478061?logo=voidlinux&logoColor=white)](https://voidlinux.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Pacote binário pré-compilado e atualizado do compositor Wayland **[Umbriel](https://github.com/noctalia-dev/umbriel)** para **Void Linux**.
+
+O Umbriel é um compositor Wayland moderno construído sobre o `wlroots`, com suporte nativo a layouts *scrolling*, *dwindle* e *master*, além de shaders e animações.
+
+Este repositório compila automaticamente novas versões na nuvem (via GitHub Actions) todos os dias assim que surgem novos commits no repositório oficial do Umbriel.
 
 ---
 
-## 🚀 Como Funciona
+## ⚡ Instalação Rápida
 
-1. **Agendamento Diário:** O GitHub Actions roda todos os dias às 04:00 UTC (01:00 BRT).
-2. **Detecção de Atualização:** Compara o commit mais recente do repositório upstream ([noctalia-dev/umbriel](https://github.com/noctalia-dev/umbriel)) com as Releases existentes.
-3. **Compilação na Nuvem:** Se houver commit novo, inicia um container oficial do Void Linux, executa o `xbps-src pkg umbriel` e assina o repositório com `xbps-rindex`.
-4. **Publicação Automática:** Envia os binários `.xbps` e os metadados `x86_64-repodata` para uma nova **GitHub Release**.
+Para instalar a versão estável mais recente em qualquer máquina com **Void Linux (glibc x86_64)**:
 
----
+### Opção 1: Comando automático em 2 passos
 
-## 🛠️ Como Subir este Repositório para o seu GitHub
-
-Se você ainda não criou o repositório no GitHub:
-
-1. Acesse [github.com/new](https://github.com/new) e crie um repositório chamado `umbriel-void` (pode ser público).
-2. No seu terminal local, execute:
+Abra o terminal e execute:
 
 ```bash
-cd ~/umbriel-void
+# 1. Baixar o pacote binário mais recente da release
+curl -s https://api.github.com/repos/Wiljapa/umbriel-void/releases/latest \
+  | grep "browser_download_url.*\.xbps" \
+  | cut -d : -f 2,3 \
+  | tr -d \" \
+  | wget -qi -
 
-# Configure seu nome e e-mail no git (caso ainda não tenha feito)
-git config user.name "Seu Nome"
-git config user.email "seu@email.com"
-
-# Inicialize e envie para o GitHub (substitua SEU_USUARIO pelo seu username)
-git init -b main
-git add .
-git commit -m "feat: setup automated build and template for umbriel"
-git remote add origin https://github.com/SEU_USUARIO/umbriel-void.git
-git push -u origin main
+# 2. Instalar (o XBPS resolve e baixa todas as dependências oficiais automaticamente)
+sudo xbps-install --repository=$PWD -u umbriel
 ```
 
----
-
-## ⚙️ Habilitar Permissões no GitHub
-
-Para que o GitHub Actions consiga criar as Releases com os binários:
-
-1. No seu repositório no GitHub, clique em **Settings** > **Actions** > **General**.
-2. Na seção **Workflow permissions**, selecione:
-   - **Read and write permissions**
-3. Clique em **Save**.
+### Opção 2: Download manual
+1. Acesse a aba **[Releases](https://github.com/Wiljapa/umbriel-void/releases/latest)**.
+2. Baixe o arquivo `umbriel-*.x86_64.xbps`.
+3. Na pasta onde o arquivo foi baixado, rode:
+   ```bash
+   sudo xbps-install --repository=$PWD -u umbriel
+   ```
 
 ---
 
-## ▶️ Como Rodar Manualmente a Primeira Vez
+## 🚀 Pós-Instalação e Configuração
 
-1. No seu repositório no GitHub, vá na aba **Actions**.
-2. No menu lateral esquerdo, clique em **Build and Release Umbriel**.
-3. Clique no botão **Run workflow** > **Run workflow**.
-4. Em ~5 a 10 minutos a compilação estará concluída e o binário estará disponível na aba **Releases**!
-
----
-
-## 📦 Como Instalar a Versão Compilada no seu Computador
-
-Quando uma nova release for publicada, você pode instalar diretamente apontando o `xbps-install` para a URL da Release:
+### 1. Criar o arquivo de configuração padrão
+Copie o modelo de configuração fornecido para o seu diretório de usuário:
 
 ```bash
-# Substitua A_TAG_DA_RELEASE
-sudo xbps-install --repository=https://github.com/Wiljapa/umbriel-void/releases/download/0.1.0gitYYYYMMDD-XXXXXXXX/ -u umbriel
+mkdir -p ~/.config/umbriel
+cp /usr/share/umbriel/config.toml ~/.config/umbriel/
 ```
 
-Ou, se preferir baixar o arquivo `.xbps` e adicionar à sua pasta local `~/void_pacotes`:
+### 2. Validar a configuração
+Antes de iniciar, você pode validar se sua sintaxe está correta:
 
 ```bash
-cd ~/void_pacotes
-curl -LO https://github.com/Wiljapa/umbriel-void/releases/latest/download/umbriel-0.1.0git...x86_64.xbps
-xbps-rindex -a *.xbps
-sudo xbps-install -R $PWD -u umbriel
+umbriel validate
 ```
+
+### 3. Iniciar o Umbriel
+Você pode iniciar o compositor de duas maneiras:
+
+- **Via TTY (Terminal limpo):**
+  Faça login em um TTY (ex: `Ctrl + Alt + F2`) e execute:
+  ```bash
+  start-umbriel
+  ```
+  *(O `start-umbriel` configura as variáveis de ambiente necessárias do Wayland e inicia a sessão)*.
+
+- **Via Display Manager (Login gráfico):**
+  O pacote já instala a entrada para sessões Wayland em `/usr/share/wayland-sessions/umbriel.desktop`. Basta selecionar **Umbriel** no seu gerenciador de login (ex: SDDM, Greetd, GDM, LightDM).
+
+---
+
+## 🛠️ Compilação Manual (xbps-src)
+
+Caso você prefira compilar o pacote localmente no seu computador em vez de usar os binários pré-compilados:
+
+1. Clone o repositório oficial do `void-packages`:
+   ```bash
+   git clone --depth=1 https://github.com/void-linux/void-packages.git
+   cd void-packages
+   ./xbps-src binary-bootstrap
+   ```
+
+2. Clone este repositório e copie o template para dentro do `void-packages`:
+   ```bash
+   git clone https://github.com/Wiljapa/umbriel-void.git /tmp/umbriel-void
+   cp -r /tmp/umbriel-void/srcpkgs/umbriel srcpkgs/
+   ```
+
+3. Compile e empacote:
+   ```bash
+   ./xbps-src pkg umbriel
+   ```
+
+4. Instale o pacote gerado:
+   ```bash
+   sudo xbps-install --repository=hostdir/binpkgs -u umbriel
+   ```
+
+---
+
+## 🔄 Como Funciona a Automação (CI/CD)
+
+- **Monitoramento Diário:** O GitHub Actions roda diariamente às 04:00 UTC e verifica se o commit mais recente do [noctalia-dev/umbriel](https://github.com/noctalia-dev/umbriel) mudou.
+- **Compilação Limpa:** Se houver atualizações, um container oficial do Void Linux (`ghcr.io/void-linux/void-glibc-full`) é inicializado no GitHub Actions.
+- **Release Automatizada:** O `xbps-src` compila o compositor com suporte a `jemalloc` e dependências completas do Wayland, gerando o pacote `.xbps` e o índice `x86_64-repodata` anexados na nova Release.
+
+---
+
+## 📄 Créditos e Licença
+
+- Compositor **Umbriel** desenvolvido por [noctalia-dev](https://github.com/noctalia-dev/umbriel).
+- Empacotamento mantido por [Wiljapa](https://github.com/Wiljapa).
+- Licença: **MIT**.
