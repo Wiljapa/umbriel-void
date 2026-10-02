@@ -11,6 +11,10 @@ O Umbriel é um compositor Wayland moderno construído sobre o `wlroots`, com su
 
 Este repositório compila automaticamente novas versões na nuvem (via GitHub Actions) todos os dias assim que surgem novos commits no repositório oficial do Umbriel.
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="Umbriel no Void Linux com Noctalia" width="100%">
+</p>
+
 ---
 
 ## ⚡ Instalação Rápida
