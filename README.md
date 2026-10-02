@@ -36,14 +36,30 @@ Se preferir baixar manualmente sem usar o script:
 
 ---
 
+## ⚙️ Pós-Instalação: Criando seu `config.toml`
+
+Antes de iniciar o Umbriel pela primeira vez, você deve criar a pasta de configuração no seu usuário e copiar o modelo padrão que o pacote instala:
+
+```bash
+mkdir -p ~/.config/umbriel
+cp /usr/share/umbriel/config.toml ~/.config/umbriel/
+```
+
+> **Dica:** Sempre que editar seu arquivo de configuração, valide se a sintaxe está correta com:
+> ```bash
+> umbriel validate
+> ```
+
+---
+
 ## 🎨 Integração com o Noctalia Desktop Shell
 
 O Umbriel foi desenhado pelos mesmos criadores do **[Noctalia Shell](https://github.com/noctalia-dev/noctalia)** (barra de status, launcher de apps, notificações, wallpaper e painéis do sistema). 
 
-Se você utiliza o Noctalia, configure seu `~/.config/umbriel/config.toml` desta forma:
+Após copiar seu `config.toml` como mostrado acima, configure-o para iniciar e controlar o Noctalia:
 
 ### 1. Inicialização automática (Autostart)
-Abra o arquivo `~/.config/umbriel/config.toml` e adicione o `noctalia` e o servidor de áudio/input no bloco `[general]`:
+Abra o arquivo `~/.config/umbriel/config.toml` e adicione o `noctalia` e o servidor de áudio no bloco `[general]`:
 
 ```toml
 [general]
