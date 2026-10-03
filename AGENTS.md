@@ -50,9 +50,21 @@ Este arquivo é lido automaticamente pelo Antigravity em todas as sessões para 
 
 ---
 
+## 🌐 Tradução da UI (Refinamento & Validação na Máquina do Wil)
+- **Patch de Tradução**: `srcpkgs/umbriel/patches/0001-portuguese-ui.patch` (sincronizado em `void-packages` e preparado em `umbriel-void`).
+- **Diretriz de Tradução**:
+  - Evitar termos robóticos ou repetitivos como "Alternar ..." para cada `Toggle...`. Usar termos limpos e diretos da indústria (`Tela cheia`, `Janela flutuante`, `Guia de atalhos`, `Visão geral`, `Modo abas`).
+- **Escopo Traduzido**:
+  1. **Cabeçalho e Rodapé do Cheatsheet (`cheatsheet.cpp`)**: "Atalhos do Umbriel", aviso de configuração e "pressione qualquer tecla para fechar".
+  2. **Grupos do Cheatsheet (`cheatsheet_rows.cpp`)**: Aplicativos, Transmissão, Foco, Mover & Redimensionar, Janelas, Scratchpad, Espaços de Trabalho, Visão Geral, Sistema.
+  3. **Ações dos Atalhos (`cheatsheet_rows.cpp`)**: Tradução limpa e direta (`Tela cheia`, `Janela flutuante`, `Guia de atalhos`, `Fechar janela`, `Maximizar janela`, `Foco à esquerda`, `Mudar espaço: 1-9`, `Sair do Umbriel`, etc.).
+  4. **Diálogo de Saída (`quit_confirm.cpp`)**: "Sair do Umbriel? Enter confirma...", etc.
+  5. **Banners de Configuração (`config_banner.cpp`)**: Alertas de erros e avisos em português.
+
+---
+
 ## 🚀 Estado Atual
-- Suíte completa do Umbriel (compositor + portal) **compilada com 100% de sucesso via `xbps-src` localmente**.
-- Gerados os binários:
-  - `umbriel-0.1.0git20261003_1.x86_64.xbps`
-  - `xdg-desktop-portal-umbriel-0.1.0git20261003_1.x86_64.xbps`
-- Repositório Git [Wiljapa/umbriel-void](https://github.com/Wiljapa/umbriel-void) atualizado e sincronizado.
+- Suíte completa do Umbriel (compositor + portal) **compilada com 100% de sucesso via `xbps-src` e validada em produção pelo Wil**.
+- Patch de tradução da interface (`0001-portuguese-ui.patch`) aprovado, integrado e publicado no repositório `umbriel-void`.
+- GitHub Actions acionado para compilação contínua e distribuição pública dos pacotes via GitHub Pages e GitHub Releases.
+- Arquivo de configuração em `~/.config/umbriel/config.toml` alinhado e validado (`config: ok`).

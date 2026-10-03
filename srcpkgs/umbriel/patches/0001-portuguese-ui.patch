@@ -1,0 +1,241 @@
+diff --git a/src/scene/cheatsheet.cpp b/src/scene/cheatsheet.cpp
+index 3735ae4..24e2330 100644
+--- a/src/scene/cheatsheet.cpp
++++ b/src/scene/cheatsheet.cpp
+@@ -341,17 +341,17 @@ namespace {
+   // notice) and the footer naming the modifier key.
+   Chrome renderChrome(bool configMissing, std::string_view modKeyName, double scale, const CheatsheetPalette& palette) {
+     std::string titleMarkup =
+-        std::format("<span size='14pt' weight='bold' foreground='{}'>Umbriel keybinds</span>", palette.accentPrimary);
++        std::format("<span size='14pt' weight='bold' foreground='{}'>Atalhos do Umbriel</span>", palette.accentPrimary);
+     if (configMissing) {
+       titleMarkup += std::format(
+-          "\n<span foreground='{}'>no config found \xc2\xb7 showing built-in defaults</span>", palette.warning
++          "\n<span foreground='{}'>nenhuma configuração encontrada \xc2\xb7 exibindo padrões</span>", palette.warning
+       );
+       titleMarkup += std::format(
+-          "\n<span foreground='{}'>copy examples/config.toml to ~/.config/umbriel/config.toml</span>", palette.textMuted
++          "\n<span foreground='{}'>copie /usr/share/umbriel/config.toml para ~/.config/umbriel/config.toml</span>", palette.textMuted
+       );
+     }
+     const std::string footerMarkup = std::format(
+-        "<span foreground='{}'>Mod = {} \xc2\xb7 press any key to close</span>", palette.textMuted, modKeyName
++        "<span foreground='{}'>Mod = {} \xc2\xb7 pressione qualquer tecla para fechar</span>", palette.textMuted, modKeyName
+     );
+ 
+     const auto render = [scale](std::string markup) {
+diff --git a/src/scene/cheatsheet_rows.cpp b/src/scene/cheatsheet_rows.cpp
+index a9d745d..472eead 100644
+--- a/src/scene/cheatsheet_rows.cpp
++++ b/src/scene/cheatsheet_rows.cpp
+@@ -164,6 +164,114 @@ namespace {
+     return workspace != nullptr ? workspaceReferenceLabel(workspace->reference) : std::string{};
+   }
+ 
++  std::string_view localizedActionName(umbriel::KeybindAction action, std::string_view fallback) {
++    using A = umbriel::KeybindAction;
++    switch (action) {
++    case A::WindowClose: return "Fechar janela";
++    case A::ToggleFloating: return "Janela flutuante";
++    case A::ToggleMaximize: return "Maximizar janela";
++    case A::ToggleMaximizeToEdges: return "Maximizar até bordas";
++    case A::ToggleFullscreen: return "Tela cheia";
++    case A::TogglePinned: return "Fixar janela";
++    case A::ColumnToggleTabbed: return "Modo abas";
++    case A::ColumnSetDisplay: return "Exibição da coluna";
++    case A::ColumnMoveTabNext: return "Mover aba seguinte";
++    case A::ColumnMoveTabPrevious: return "Mover aba anterior";
++    case A::ColumnToggleTabBar: return "Barra de abas";
++    case A::ColumnShowTabBar: return "Exibir barra de abas";
++    case A::ColumnHideTabBar: return "Ocultar barra de abas";
++    case A::WindowFocusLeft: return "Foco à esquerda";
++    case A::WindowFocusRight: return "Foco à direita";
++    case A::WindowFocusUp: return "Foco acima";
++    case A::WindowFocusDown: return "Foco abaixo";
++    case A::WindowFocusOrOutputLeft: return "Foco/saída à esquerda";
++    case A::WindowFocusOrOutputRight: return "Foco/saída à direita";
++    case A::WindowFocusOrOutputUp: return "Foco/saída acima";
++    case A::WindowFocusOrOutputDown: return "Foco/saída abaixo";
++    case A::WindowFocusOrWorkspaceUp: return "Foco/espaço acima";
++    case A::WindowFocusOrWorkspaceDown: return "Foco/espaço abaixo";
++    case A::WindowFocusNext: return "Próxima janela";
++    case A::WindowFocusPrevious: return "Janela anterior";
++    case A::WindowFocusLast: return "Última janela";
++    case A::WindowFocusSwitchFloating: return "Focar flutuante/normal";
++    case A::ColumnFocusFirst: return "Primeira coluna";
++    case A::ColumnFocusLast: return "Última coluna";
++    case A::ColumnFocusTab: return "Focar aba";
++    case A::ColumnFocusTabNext: return "Próxima aba";
++    case A::ColumnFocusTabPrevious: return "Aba anterior";
++    case A::WorkspaceFocusLast: return "Último espaço";
++    case A::OutputFocusLeft: return "Foco na tela à esquerda";
++    case A::OutputFocusRight: return "Foco na tela à direita";
++    case A::OutputFocusUp: return "Foco na tela acima";
++    case A::OutputFocusDown: return "Foco na tela abaixo";
++    case A::OutputFocusNext: return "Próxima tela";
++    case A::OutputFocusPrevious: return "Tela anterior";
++    case A::ColumnMoveLeft: return "Mover coluna à esquerda";
++    case A::ColumnMoveRight: return "Mover coluna à direita";
++    case A::ColumnMoveToFirst: return "Mover coluna ao início";
++    case A::ColumnMoveToLast: return "Mover coluna ao final";
++    case A::ColumnCenter: return "Centralizar coluna";
++    case A::WindowMoveLeft: return "Mover janela à esquerda";
++    case A::WindowMoveRight: return "Mover janela à direita";
++    case A::WindowMoveUp: return "Mover janela acima";
++    case A::WindowMoveDown: return "Mover janela abaixo";
++    case A::WindowConsumeLeft: return "Agrupar à esquerda";
++    case A::WindowConsumeRight: return "Agrupar à direita";
++    case A::WindowCyclePrimaryExtent: return "Ajustar largura";
++    case A::WindowCyclePrimaryExtentBack: return "Ajustar largura (inverso)";
++    case A::WindowSetPrimaryExtent: return "Definir largura";
++    case A::WindowModifyPrimaryExtent: return "Modificar largura";
++    case A::WindowCenter: return "Centralizar janela";
++    case A::WindowSwapNext: return "Trocar com próxima";
++    case A::WindowSwapPrevious: return "Trocar com anterior";
++    case A::WindowSwapLeft: return "Trocar para a esquerda";
++    case A::WindowSwapRight: return "Trocar para a direita";
++    case A::WindowSwapUp: return "Trocar para cima";
++    case A::WindowSwapDown: return "Trocar para baixo";
++    case A::WindowMoveToOutputLeft: return "Mover para tela à esquerda";
++    case A::WindowMoveToOutputRight: return "Mover para tela à direita";
++    case A::WindowMoveToOutputUp: return "Mover para tela acima";
++    case A::WindowMoveToOutputDown: return "Mover para tela abaixo";
++    case A::WindowMoveToOutputNext: return "Mover para próxima tela";
++    case A::WindowMoveToOutputPrevious: return "Mover para tela anterior";
++    case A::WorkspaceSwitch: return "Mudar espaço";
++    case A::WorkspaceNext: return "Próximo espaço";
++    case A::WorkspacePrevious: return "Espaço anterior";
++    case A::WorkspaceMoveUp: return "Mover espaço acima";
++    case A::WorkspaceMoveDown: return "Mover espaço abaixo";
++    case A::WindowMoveToWorkspace: return "Mover para espaço";
++    case A::WindowMoveToWorkspaceSilent: return "Mover para espaço (silencioso)";
++    case A::WindowMoveToWorkspaceNext: return "Mover para próximo espaço";
++    case A::WindowMoveToWorkspacePrevious: return "Mover para espaço anterior";
++    case A::ColumnMoveToWorkspace: return "Mover coluna para espaço";
++    case A::WindowMoveToScratchpad: return "Enviar ao scratchpad";
++    case A::WindowRestoreFromScratchpad: return "Restaurar do scratchpad";
++    case A::WindowToggleScratchpad: return "Enviar ao scratchpad";
++    case A::ScratchpadToggle: return "Abrir scratchpad";
++    case A::ScratchpadFocusNext: return "Próximo no scratchpad";
++    case A::OverviewToggle: return "Visão geral";
++    case A::OverviewOpen: return "Abrir visão geral";
++    case A::OverviewClose: return "Fechar visão geral";
++    case A::ScreenCastClear: return "Limpar transmissão";
++    case A::ScreenCastSetOutput: return "Transmitir tela";
++    case A::ScreenCastSetWindow: return "Transmitir janela";
++    case A::ScreenCastFollowWindow: return "Seguir janela";
++    case A::ScreenCastFollowOutput: return "Seguir tela";
++    case A::ScreenCastFollowStop: return "Parar transmissão";
++    case A::SessionQuit: return "Sair do Umbriel";
++    case A::CheatsheetToggle: return "Guia de atalhos";
++    case A::CheatsheetOpen: return "Abrir atalhos";
++    case A::CheatsheetClose: return "Fechar atalhos";
++    case A::ConfigReload: return "Recarregar configuração";
++    case A::ShortcutsInhibitToggle: return "Pausar atalhos";
++    case A::KeyboardLayoutNext: return "Próximo teclado";
++    case A::DpmsOff: return "Desligar monitores (DPMS)";
++    case A::DpmsOn: return "Ligar monitores (DPMS)";
++    default:
++      return fallback;
++    }
++  }
++
+   // Driven by the spec's argument kind and the bind's payload variant, so the
+   // set of parameterized actions lives in exactly one place: the spec table.
+   std::string actionLabel(const umbriel::Keybind& bind) {
+@@ -171,7 +279,7 @@ namespace {
+       if (spec.action != bind.action) {
+         continue;
+       }
+-      std::string name(spec.name);
++      std::string name(localizedActionName(bind.action, spec.name));
+       switch (spec.argKind) {
+       case umbriel::ActionArgKind::None:
+         return name;
+@@ -293,23 +401,23 @@ namespace {
+   const char* groupTitleImpl(Group group) {
+     switch (group) {
+     case Group::Apps:
+-      return "Apps";
++      return "Aplicativos";
+     case Group::Screencasting:
+-      return "Screencasting";
++      return "Transmissão";
+     case Group::Focus:
+-      return "Focus";
++      return "Foco";
+     case Group::MoveSize:
+-      return "Move & size";
++      return "Mover & Redimensionar";
+     case Group::Windows:
+-      return "Windows";
++      return "Janelas";
+     case Group::Scratchpad:
+       return "Scratchpad";
+     case Group::Workspaces:
+-      return "Workspaces";
++      return "Espaços de Trabalho";
+     case Group::Overview:
+-      return "Overview";
++      return "Visão Geral";
+     case Group::System:
+-      return "System";
++      return "Sistema";
+     default:
+       return nullptr; // submaps handled separately
+     }
+@@ -747,7 +855,7 @@ namespace umbriel {
+         rows[digitIndices[0]].chord = modPrefix
+             + "1\xe2\x80\xa6"
+               "9"; // 1…9
+-        rows[digitIndices[0]].action = std::string(specName) + ": 1-9";
++        rows[digitIndices[0]].action = std::string(localizedActionName(wsAction, specName)) + ": 1-9";
+         if (!rk.submapAfter.empty()) {
+           rows[digitIndices[0]].action += " \xe2\x86\x92 " + rk.submapAfter;
+         }
+diff --git a/src/scene/config_banner.cpp b/src/scene/config_banner.cpp
+index 72eef74..6fb366b 100644
+--- a/src/scene/config_banner.cpp
++++ b/src/scene/config_banner.cpp
+@@ -166,8 +166,8 @@ namespace umbriel {
+ 
+     const int total = static_cast<int>(ordered.size());
+     const std::string heading = total == 1
+-        ? std::string(hasError ? "Configuration error" : "Configuration warning")
+-        : std::format("{} configuration {}", total, hasError ? "problems" : "warnings");
++        ? std::string(hasError ? "Erro de configuração" : "Aviso de configuração")
++        : std::format("{} {} de configuração", total, hasError ? "problemas" : "avisos");
+ 
+     // Build pango markup: heading, a blank spacer, one bulleted entry per
+     // diagnostic, then a muted footer.
+@@ -190,10 +190,10 @@ namespace umbriel {
+ 
+     std::string footer;
+     if (total > shown) {
+-      footer += std::format("+{} more \xc2\xb7 ", total - shown);
++      footer += std::format("+{} mais \xc2\xb7 ", total - shown);
+     }
+     footer +=
+-        hasError ? "configuration not applied \xc2\xb7 run `umbriel config validate`" : "run `umbriel config validate`";
++        hasError ? "configuração não aplicada \xc2\xb7 execute `umbriel config validate`" : "execute `umbriel config validate`";
+     markup += std::format("\n\n<span foreground='{}'>{}</span>", mutedColor, escapeMarkup(footer));
+ 
+     // Transparent background: the panel rect behind provides the surface.
+diff --git a/src/scene/quit_confirm.cpp b/src/scene/quit_confirm.cpp
+index 4ac538b..6a40477 100644
+--- a/src/scene/quit_confirm.cpp
++++ b/src/scene/quit_confirm.cpp
+@@ -82,10 +82,10 @@ namespace umbriel {
+ 
+     // Static strings, no user input, so no escaping needed. Transparent background: the panel rect behind provides the
+     // surface. The title is sized like the cheatsheet's heading.
+-    const std::string_view heading = m_kind == Kind::SessionQuit ? "Quit Umbriel?" : "Allow screencast target changes?";
++    const std::string_view heading = m_kind == Kind::SessionQuit ? "Sair do Umbriel?" : "Permitir alterar alvo da transmissão?";
+     const std::string_view detail = m_kind == Kind::SessionQuit
+-        ? "Enter confirms; any other key or click cancels"
+-        : "This can reveal another window or screen. Enter confirms; any other key or click cancels";
++        ? "Enter confirma; qualquer outra tecla ou clique cancela"
++        : "Isso pode revelar outra janela ou tela. Enter confirma; qualquer outra tecla ou clique cancela";
+     std::string markup =
+         std::format("<span size='14pt' weight='bold' foreground='{}'>{}</span>", headingColor, heading);
+     markup += std::format("\n<span foreground='{}'>{}</span>", textColor, detail);
