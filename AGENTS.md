@@ -68,3 +68,14 @@ Este arquivo é lido automaticamente pelo Antigravity em todas as sessões para 
 - Patch de tradução da interface (`0001-portuguese-ui.patch`) aprovado, integrado e publicado no repositório `umbriel-void`.
 - GitHub Actions acionado para compilação contínua e distribuição pública dos pacotes via GitHub Pages e GitHub Releases.
 - Arquivo de configuração em `~/.config/umbriel/config.toml` alinhado e validado (`config: ok`).
+
+---
+
+## 💿 Preparação da LiveCD (Stack Umbriel + Noctalia)
+- **Documentação & Lista de Pacotes**: Mapeada em `~/LIVECD_PACKAGES.md` e `~/packages-livecd.list`.
+- **Display Manager**: `greetd` + `cage` + `noctalia-greeter` (já instalado e validado no sistema).
+- **Repositórios Combinados para `void-mklive`**:
+  1. Void Linux Oficial (`https://repo-fastly.voidlinux.org/current`).
+  2. Voiders (`https://repo.voiders.dev`): Fornece `noctalia` e `noctalia-greeter`.
+  3. Umbriel-Void (`https://wiljapa.github.io/umbriel-void`): Fornece `umbriel` e `xdg-desktop-portal-umbriel`.
+- **Serviços Ativos no Runit**: `dbus`, `udevd`, `NetworkManager`, `bluetoothd`, `rtkit`, `upower`, `greetd`.
