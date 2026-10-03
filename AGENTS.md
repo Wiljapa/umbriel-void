@@ -12,13 +12,15 @@ Este arquivo é lido automaticamente pelo Antigravity em todas as sessões para 
 
 2. **Princípios e Preferências**:
    - **Continuidade & Memória**: Sempre salvar e atualizar este arquivo com o progresso, decisões e estado atual para manter a memória entre sessões.
-   - **Compatibilidade com Apps Antigos (X11)**:
+   - **Compatibilidade com Apps Antigos (X11) e Fontes**:
      - O Umbriel deve ter compatibilidade com aplicativos legados (X11) via `xorg-server-xwayland`.
+     - Inclui `virtual?font:sans-serif` para garantir renderização de texto e mensagens de diagnóstico do compositor.
    - **O que é o "Portal"**:
-     - No Wayland, "portal" refere-se ao `xdg-desktop-portal-umbriel` (necessário para compartilhamento de tela no Discord/Meet/OBS e Flatpaks).
+     - No Wayland, "portal" refere-se exclusivamente ao `xdg-desktop-portal-umbriel` (necessário para compartilhamento de tela no Discord/Meet/OBS e Flatpaks).
+     - **Não é nada sobre IA**; é o termo técnico para o subsistema de captura e permissões do Wayland.
      - Ele é um projeto e pacote **separado** do compositor. O pacote `umbriel` permanece focado apenas no compositor. Se necessário no futuro, criaremos o subpacote/template `xdg-desktop-portal-umbriel`.
-   - **Qualidade do Empacotamento (Void Linux / xbps-src)**:
-     - Seguir rigorosamente as boas práticas do `xbps-src` e `xlint`.
+   - **Qualidade do Empacotamento (Void Linux / xbps-src / Upstream Specs)**:
+     - Seguir rigorosamente as boas práticas do `xbps-src`, `xlint` e o `PACKAGING.md` oficial do upstream.
      - Evitar redundâncias como `meson ninja` em `hostmakedepends` quando `build_style=meson`.
      - Respeitar suporte upstream (ex: `lcms2` para cores, `xorg-server-xwayland` para X11 nativo).
 
@@ -26,9 +28,9 @@ Este arquivo é lido automaticamente pelo Antigravity em todas as sessões para 
 
 ## 📝 Histórico de Decisões e Polimento do Template (`srcpkgs/umbriel/template`)
 
-1. **Dependência de X11 (`xorg-server-xwayland`)**:
-   - **Substituído**: `xwayland-satellite` foi removido.
-   - **Corrigido**: Adicionado `depends="xorg-server-xwayland"`. O Umbriel chama `/usr/bin/Xwayland` nativamente para rodar qualquer aplicativo X11 sem depender de intermediários.
+1. **Dependência de X11 e Fontes**:
+   - `depends="xorg-server-xwayland virtual?font:sans-serif"`.
+   - `xwayland-satellite` foi removido definitivamente. O Umbriel chama `/usr/bin/Xwayland` nativamente para rodar qualquer aplicativo X11 sem intermediários.
 2. **Dependência de Cores (ICC)**:
    - Adicionado `lcms2-devel` a `makedepends` para permitir gerenciamento de cores e perfis ICC pelo `umbrielfx`.
 3. **Limpeza de `hostmakedepends`**:

@@ -18,7 +18,7 @@ makedepends="
  jemalloc-devel
  libxcb-devel xcb-util-wm-devel
 "
-depends="xorg-server-xwayland"
+depends="xorg-server-xwayland virtual?font:sans-serif"
 short_desc="Scrolling Wayland compositor based on wlroots"
 maintainer="wiljp <wiljp@gmail.com>"
 license="MIT"
