@@ -9,6 +9,12 @@ Pacote binário pré-compilado e atualizado do compositor Wayland **[Umbriel](ht
 
 O Umbriel é um compositor Wayland moderno construído sobre o `wlroots`, com suporte nativo a layouts *scrolling*, *dwindle* e *master*, além de shaders e animações.
 
+Este repositório fornece a suíte oficial completa:
+- **`umbriel`**: Compositor Wayland com compatibilidade nativa para aplicativos antigos X11 (`xorg-server-xwayland`) e gerenciamento de cores ICC (`lcms2`).
+- **`xdg-desktop-portal-umbriel`**: Portal oficial com seletor de telas/janelas (`umbriel-share-picker`) para compartilhamento de tela no Discord, Google Meet e gravação no OBS Studio.
+
+> Ao instalar o `umbriel` pelo XBPS, o portal e os componentes de compatibilidade são instalados automaticamente como dependências!
+
 Este repositório compila automaticamente novas versões na nuvem (via GitHub Actions) todos os dias assim que surgem novos commits no repositório oficial do Umbriel.
 
 <p align="center">

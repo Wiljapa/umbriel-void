@@ -73,12 +73,13 @@ jobs:
           git clone --depth 1 https://github.com/void-linux/void-packages.git /void-packages
           cd /void-packages
           
-          # Copiar nosso template do umbriel
-          cp -r /custom-repo/srcpkgs/umbriel /void-packages/srcpkgs/
+          # Copiar nossos templates customizados (umbriel e xdg-desktop-portal-umbriel)
+          cp -r /custom-repo/srcpkgs/* /void-packages/srcpkgs/
           
-          # Ajustar versão no template para refletir a data do commit
+          # Ajustar versão nos templates para refletir a data do commit
           COMMIT_DATE="${{ steps.check_upstream.outputs.commit_date }}"
           sed -i "s/^[[:space:]]*version=.*/version=0.1.0git${COMMIT_DATE}/" /void-packages/srcpkgs/umbriel/template
+          sed -i "s/^[[:space:]]*version=.*/version=0.1.0git${COMMIT_DATE}/" /void-packages/srcpkgs/xdg-desktop-portal-umbriel/template
           
           # Permitir execução do chroot dentro do container do GitHub Actions
           echo "XBPS_ALLOW_CHROOT_BREAKOUT=yes" >> etc/conf
@@ -86,10 +87,11 @@ jobs:
           # Inicializar o masterdir do xbps-src
           ./xbps-src binary-bootstrap
 
-      - name: 5. Compilar pacote XBPS
+      - name: 5. Compilar pacotes XBPS
         if: steps.check_upstream.outputs.build_needed == 'true'
         working-directory: /void-packages
         run: |
+          ./xbps-src pkg xdg-desktop-portal-umbriel
           ./xbps-src pkg umbriel
 
       - name: 6. Gerar índice do repositório XBPS
