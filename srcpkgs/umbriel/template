@@ -1,17 +1,25 @@
 # Template file for 'umbriel'
 pkgname=umbriel
-version=0.1.0git20261001
+version=0.1.0git20261003
 revision=1
 build_style=meson
 configure_args="-Dtests=disabled -Djemalloc=auto"
 hostmakedepends="pkg-config wayland-devel git"
-makedepends="wlroots0.20-devel wayland-devel wayland-protocols
- libxkbcommon-devel libinput-devel pixman-devel libdrm-devel
- cairo-devel pango-devel tomlplusplus-devel json-c++
- eudev-libudev-devel MesaLib-devel libglvnd-devel jemalloc-devel
- libxcb-devel xcb-util-wm-devel"
-depends="xwayland-satellite"
-short_desc="Wayland compositor built on wlroots"
+makedepends="
+ wlroots0.20-devel
+ wayland-devel wayland-protocols
+ libxkbcommon-devel libinput-devel
+ pixman-devel libdrm-devel
+ cairo-devel pango-devel
+ tomlplusplus-devel json-c++
+ eudev-libudev-devel
+ MesaLib-devel libglvnd-devel
+ lcms2-devel
+ jemalloc-devel
+ libxcb-devel xcb-util-wm-devel
+"
+depends="xorg-server-xwayland"
+short_desc="Scrolling Wayland compositor based on wlroots"
 maintainer="wiljp <wiljp@gmail.com>"
 license="MIT"
 homepage="https://github.com/noctalia-dev/umbriel"
@@ -23,4 +31,6 @@ do_fetch() {
 
 post_install() {
 	vlicense LICENSE
+	vdoc README.md
+	vdoc PACKAGING.md
 }
