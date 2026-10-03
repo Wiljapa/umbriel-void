@@ -4,6 +4,12 @@ on:
   schedule:
     # Roda automaticamente todos os dias às 04:00 UTC (01:00 BRT)
     - cron: '0 4 * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - 'srcpkgs/**'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
     # Permite disparar manualmente pelo botão "Run workflow" no GitHub
     inputs:
@@ -51,6 +57,11 @@ jobs:
           COMMIT_DATE=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/noctalia-dev/umbriel/commits/$LATEST_SHA" | grep '"date":' | head -n1 | cut -d'"' -f4 | cut -d'T' -f1 | tr -d '-' || true)
           if [ -z "$COMMIT_DATE" ]; then
             COMMIT_DATE=$(date +'%Y%m%d')
+          fi
+          
+          # Se o evento for push ou se forçado manualmente, compila sempre
+          if [ "${{ github.event_name }}" = "push" ]; then
+            FORCE_BUILD="true"
           fi
           
           RELEASE_TAG="0.1.0git${COMMIT_DATE}-${SHORT_SHA}"
