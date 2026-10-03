@@ -24,7 +24,7 @@ Este arquivo é lido automaticamente pelo Antigravity em todas as sessões para 
    - **Qualidade do Empacotamento (Void Linux / xbps-src / Upstream Specs)**:
      - Seguir rigorosamente as boas práticas do `xbps-src`, `xlint` e o `PACKAGING.md` oficial do upstream.
      - Evitar redundâncias como `meson ninja` em `hostmakedepends` quando `build_style=meson`.
-     - Respeitar suporte upstream (ex: `lcms2` para cores, `xorg-server-xwayland` para X11 nativo).
+     - Respeitar suporte upstream (ex: `lcms2` para cores, `xorg-server-xwayland` para X11 nativo, `libgbm-devel` para buffer management).
 
 ---
 
@@ -40,7 +40,7 @@ Este arquivo é lido automaticamente pelo Antigravity em todas as sessões para 
 
 2. **Template `srcpkgs/xdg-desktop-portal-umbriel/template`**:
    - Criado para prover o backend oficial do XDG Desktop Portal para o Umbriel.
-   - Dependências completas: `sdbus-c++-devel`, `pipewire-devel`, `wayland-devel`, `wayland-protocols`, `libdrm-devel`, `MesaLib-devel`, `cairo-devel`, `tomlplusplus-devel`, `json-c++`, `gtk4-devel` (para o `umbriel-share-picker`).
+   - Dependências completas: `sdbus-c++-devel`, `pipewire-devel`, `wayland-devel`, `wayland-protocols`, `libdrm-devel`, `libgbm-devel`, `cairo-devel`, `tomlplusplus-devel`, `json-c++`, `gtk4-devel` (para o `umbriel-share-picker`).
    - `depends="xdg-desktop-portal"`.
 
 3. **Workflow GitHub Actions (`.github/workflows/build.yml`)**:
@@ -51,5 +51,8 @@ Este arquivo é lido automaticamente pelo Antigravity em todas as sessões para 
 ---
 
 ## 🚀 Estado Atual
-- Suíte completa do Umbriel (compositor + portal) estruturada, testada e validada com `xlint`.
-- Versão atual: `0.1.0git20261003_1` (commit upstream `ef2c16e`).
+- Suíte completa do Umbriel (compositor + portal) **compilada com 100% de sucesso via `xbps-src` localmente**.
+- Gerados os binários:
+  - `umbriel-0.1.0git20261003_1.x86_64.xbps`
+  - `xdg-desktop-portal-umbriel-0.1.0git20261003_1.x86_64.xbps`
+- Repositório Git [Wiljapa/umbriel-void](https://github.com/Wiljapa/umbriel-void) atualizado e sincronizado.
