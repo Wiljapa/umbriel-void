@@ -1,0 +1,26 @@
+# Template file for 'libdisplay-info'
+pkgname=libdisplay-info
+version=0.3.0
+revision=1
+build_style=meson
+hostmakedepends="hwids pkg-config"
+short_desc="EDID and DisplayID library"
+maintainer="wiljp <wiljp@gmail.com>"
+license="MIT"
+homepage="https://gitlab.freedesktop.org/emersion/libdisplay-info"
+distfiles="https://gitlab.freedesktop.org/emersion/libdisplay-info/-/archive/${version}/libdisplay-info-${version}.tar.gz"
+checksum=  # rode `xbps-src checksum libdisplay-info` depois de colocar o template
+make_check=no
+
+post_install() {
+	vlicense LICENSE
+}
+
+libdisplay-info-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove "usr/lib/*.so"
+		vmove usr/lib/pkgconfig
+	}
+}
