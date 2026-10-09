@@ -95,10 +95,6 @@ jobs:
           # Permitir execução do chroot dentro do container do GitHub Actions
           echo "XBPS_ALLOW_CHROOT_BREAKOUT=yes" >> etc/conf
           
-          # Atualizar mapa de shlibs para o novo libdisplay-info 0.3.0
-          sed -i '/libdisplay-info\.so\.2/d' common/shlibs
-          echo "libdisplay-info.so.3 libdisplay-info-0.3.0_1" >> common/shlibs
-
           # Inicializar o masterdir do xbps-src
           ./xbps-src binary-bootstrap
 
@@ -106,7 +102,6 @@ jobs:
         if: steps.check_upstream.outputs.build_needed == 'true'
         working-directory: /void-packages
         run: |
-          ./xbps-src pkg libdisplay-info
           ./xbps-src pkg xdg-desktop-portal-umbriel
           ./xbps-src pkg umbriel
 

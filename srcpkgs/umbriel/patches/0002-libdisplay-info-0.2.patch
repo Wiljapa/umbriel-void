@@ -1,0 +1,6 @@
+diff --git a/meson.build b/meson.build
+--- a/meson.build
++++ b/meson.build
+@@ -121,1 +121,1 @@
+-libdisplay_info_dep = dependency('libdisplay-info', version: '>=0.3.0')
++libdisplay_info_dep = dependency('libdisplay-info', version: '>=0.2.0')
