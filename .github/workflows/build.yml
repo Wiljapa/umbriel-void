@@ -102,6 +102,7 @@ jobs:
         if: steps.check_upstream.outputs.build_needed == 'true'
         working-directory: /void-packages
         run: |
+          ./xbps-src pkg libdisplay-info
           ./xbps-src pkg xdg-desktop-portal-umbriel
           ./xbps-src pkg umbriel
 
