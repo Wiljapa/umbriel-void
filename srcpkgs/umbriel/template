@@ -17,6 +17,7 @@ makedepends="
  lcms2-devel
  jemalloc-devel
  libxcb-devel xcb-util-wm-devel
+ libdisplay-info-devel
 "
 depends="xorg-server-xwayland virtual?font:sans-serif xdg-desktop-portal-umbriel"
 short_desc="Scrolling Wayland compositor based on wlroots"
