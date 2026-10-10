@@ -1,3 +1,11 @@
+From: Wilton <wiljp@gmail.com>
+Subject: [PATCH] l10n: add Brazilian Portuguese translations to cheatsheet UI
+
+Translate native actions, categories, header, and footer messages in
+Umbriel cheatsheet scene to Brazilian Portuguese (pt-BR).
+
+Signed-off-by: Wilton <wiljp@gmail.com>
+---
 diff --git a/src/scene/cheatsheet.cpp b/src/scene/cheatsheet.cpp
 index 3735ae4..24e2330 100644
 --- a/src/scene/cheatsheet.cpp

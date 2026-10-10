@@ -1,3 +1,11 @@
+From: Wilton <wiljp@gmail.com>
+Subject: [PATCH] meson: relax libdisplay-info dependency to >=0.2.0
+
+Void Linux repositories provide libdisplay-info 0.2.0.
+Relax the meson.build requirement from >=0.3.0 to >=0.2.0.
+
+Signed-off-by: Wilton <wiljp@gmail.com>
+---
 diff --git a/meson.build b/meson.build
 --- a/meson.build
 +++ b/meson.build
