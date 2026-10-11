@@ -1,42 +1,37 @@
-From: Wilton <wiljp@gmail.com>
-Subject: [PATCH] l10n: add Brazilian Portuguese translations to cheatsheet UI
-
-Translate native actions, categories, header, and footer messages in
-Umbriel cheatsheet scene to Brazilian Portuguese (pt-BR).
-
-Signed-off-by: Wilton <wiljp@gmail.com>
----
 diff --git a/src/scene/cheatsheet.cpp b/src/scene/cheatsheet.cpp
-index 3735ae4..24e2330 100644
+index 3735ae4..ece2615 100644
 --- a/src/scene/cheatsheet.cpp
 +++ b/src/scene/cheatsheet.cpp
-@@ -341,17 +341,17 @@ namespace {
+@@ -340,18 +340,20 @@ namespace {
+   // The panel's fixed furniture: the title (which doubles as the "no config"
    // notice) and the footer naming the modifier key.
    Chrome renderChrome(bool configMissing, std::string_view modKeyName, double scale, const CheatsheetPalette& palette) {
++    const char* lang = getenv("LANG");
++    bool pt = (lang && strncmp(lang, "pt", 2) == 0);
      std::string titleMarkup =
 -        std::format("<span size='14pt' weight='bold' foreground='{}'>Umbriel keybinds</span>", palette.accentPrimary);
-+        std::format("<span size='14pt' weight='bold' foreground='{}'>Atalhos do Umbriel</span>", palette.accentPrimary);
++        std::format(pt ? "<span size='14pt' weight='bold' foreground='{}'>Atalhos do Umbriel</span>" : "<span size='14pt' weight='bold' foreground='{}'>Umbriel keybinds</span>", palette.accentPrimary);
      if (configMissing) {
        titleMarkup += std::format(
 -          "\n<span foreground='{}'>no config found \xc2\xb7 showing built-in defaults</span>", palette.warning
-+          "\n<span foreground='{}'>nenhuma configuração encontrada \xc2\xb7 exibindo padrões</span>", palette.warning
++          pt ? "\n<span foreground='{}'>nenhuma configuração encontrada \xc2\xb7 exibindo padrões</span>" : "\n<span foreground='{}'>no config found \xc2\xb7 showing built-in defaults</span>", palette.warning
        );
        titleMarkup += std::format(
 -          "\n<span foreground='{}'>copy examples/config.toml to ~/.config/umbriel/config.toml</span>", palette.textMuted
-+          "\n<span foreground='{}'>copie /usr/share/umbriel/config.toml para ~/.config/umbriel/config.toml</span>", palette.textMuted
++          pt ? "\n<span foreground='{}'>copie /usr/share/umbriel/config.toml para ~/.config/umbriel/config.toml</span>" : "\n<span foreground='{}'>copy /usr/share/umbriel/config.toml to ~/.config/umbriel/config.toml</span>", palette.textMuted
        );
      }
      const std::string footerMarkup = std::format(
 -        "<span foreground='{}'>Mod = {} \xc2\xb7 press any key to close</span>", palette.textMuted, modKeyName
-+        "<span foreground='{}'>Mod = {} \xc2\xb7 pressione qualquer tecla para fechar</span>", palette.textMuted, modKeyName
++        pt ? "<span foreground='{}'>Mod = {} \xc2\xb7 pressione qualquer tecla para fechar</span>" : "<span foreground='{}'>Mod = {} \xc2\xb7 press any key to close</span>", palette.textMuted, modKeyName
      );
  
      const auto render = [scale](std::string markup) {
 diff --git a/src/scene/cheatsheet_rows.cpp b/src/scene/cheatsheet_rows.cpp
-index a9d745d..472eead 100644
+index 20b1051..e5c0960 100644
 --- a/src/scene/cheatsheet_rows.cpp
 +++ b/src/scene/cheatsheet_rows.cpp
-@@ -164,6 +164,114 @@ namespace {
+@@ -164,6 +164,116 @@ namespace {
      return workspace != nullptr ? workspaceReferenceLabel(workspace->reference) : std::string{};
    }
  
@@ -153,7 +148,7 @@ index a9d745d..472eead 100644
    // Driven by the spec's argument kind and the bind's payload variant, so the
    // set of parameterized actions lives in exactly one place: the spec table.
    std::string actionLabel(const umbriel::Keybind& bind) {
-@@ -171,7 +279,7 @@ namespace {
+@@ -171,7 +281,7 @@ namespace {
        if (spec.action != bind.action) {
          continue;
        }
@@ -162,7 +157,9 @@ index a9d745d..472eead 100644
        switch (spec.argKind) {
        case umbriel::ActionArgKind::None:
          return name;
-@@ -293,23 +401,36 @@ namespace {
+@@ -298,25 +408,27 @@ namespace {
+ 
+   // Row data
    const char* groupTitleImpl(Group group) {
 +    const char* lang = getenv("LANG");
 +    bool pt = (lang && strncmp(lang, "pt", 2) == 0);
@@ -196,7 +193,7 @@ index a9d745d..472eead 100644
      default:
        return nullptr; // submaps handled separately
      }
-@@ -747,7 +855,7 @@ namespace umbriel {
+@@ -758,7 +870,7 @@ namespace umbriel {
          rows[digitIndices[0]].chord = modPrefix
              + "1\xe2\x80\xa6"
                "9"; // 1…9
@@ -206,10 +203,11 @@ index a9d745d..472eead 100644
            rows[digitIndices[0]].action += " \xe2\x86\x92 " + rk.submapAfter;
          }
 diff --git a/src/scene/config_banner.cpp b/src/scene/config_banner.cpp
-index 72eef74..6fb366b 100644
+index 72eef74..74700c8 100644
 --- a/src/scene/config_banner.cpp
 +++ b/src/scene/config_banner.cpp
-@@ -166,8 +166,10 @@ namespace umbriel {
+@@ -165,9 +165,11 @@ namespace umbriel {
+     const std::string mutedColor = rgbaHex(colors.textMuted);
  
      const int total = static_cast<int>(ordered.size());
 +    const char* lang = getenv("LANG");
@@ -221,25 +219,25 @@ index 72eef74..6fb366b 100644
 +        : std::format(pt ? "{} {} de configuração" : "{} configuration {}", total, pt ? (hasError ? "problemas" : "avisos") : (hasError ? "problems" : "warnings"));
  
      // Build pango markup: heading, a blank spacer, one bulleted entry per
-@@ -190,10 +190,12 @@ namespace umbriel {
+     // diagnostic, then a muted footer.
+@@ -189,11 +191,13 @@ namespace umbriel {
+     }
  
      std::string footer;
 +    const char* lang2 = getenv("LANG");
 +    bool pt2 = (lang2 && strncmp(lang2, "pt", 2) == 0);
      if (total > shown) {
--      footer += std::format("+{} more Â· ", total - shown);
-+      footer += std::format(pt2 ? "+{} mais Â· " : "+{} more Â· ", total - shown);
+-      footer += std::format("+{} more \xc2\xb7 ", total - shown);
++      footer += std::format(pt2 ? "+{} mais \xc2\xb7 " : "+{} more \xc2\xb7 ", total - shown);
      }
      footer +=
--        hasError ? "configuration not applied Â· run `umbriel config validate`" : "run `umbriel config validate`";
-+        hasError ? (pt2 ? "configuração não aplicada Â· execute `umbriel config validate`" : "configuration not applied Â· run `umbriel config validate`") : "execute `umbriel config validate`";
-     markup += std::format("
-
-<span foreground='{}'>{}</span>", mutedColor, escapeMarkup(footer));
+-        hasError ? "configuration not applied \xc2\xb7 run `umbriel config validate`" : "run `umbriel config validate`";
++        hasError ? (pt2 ? "configuração não aplicada \xc2\xb7 execute `umbriel config validate`" : "configuration not applied \xc2\xb7 run `umbriel config validate`") : "execute `umbriel config validate`";
+     markup += std::format("\n\n<span foreground='{}'>{}</span>", mutedColor, escapeMarkup(footer));
  
      // Transparent background: the panel rect behind provides the surface.
 diff --git a/src/scene/quit_confirm.cpp b/src/scene/quit_confirm.cpp
-index 4ac538b..6a40477 100644
+index 4ac538b..da18e43 100644
 --- a/src/scene/quit_confirm.cpp
 +++ b/src/scene/quit_confirm.cpp
 @@ -82,10 +82,12 @@ namespace umbriel {
