@@ -10,21 +10,21 @@ index 3735ae4..ece2615 100644
 +    bool pt = (lang && strncmp(lang, "pt", 2) == 0);
      std::string titleMarkup =
 -        std::format("<span size='14pt' weight='bold' foreground='{}'>Umbriel keybinds</span>", palette.accentPrimary);
-+        std::format(pt ? "<span size='14pt' weight='bold' foreground='{}'>Atalhos do Umbriel</span>" : "<span size='14pt' weight='bold' foreground='{}'>Umbriel keybinds</span>", palette.accentPrimary);
++        pt ? std::format("<span size='14pt' weight='bold' foreground='{}'>Atalhos do Umbriel</span>", palette.accentPrimary) : std::format("<span size='14pt' weight='bold' foreground='{}'>Umbriel keybinds</span>", palette.accentPrimary);
      if (configMissing) {
        titleMarkup += std::format(
 -          "\n<span foreground='{}'>no config found \xc2\xb7 showing built-in defaults</span>", palette.warning
-+          pt ? "\n<span foreground='{}'>nenhuma configuração encontrada \xc2\xb7 exibindo padrões</span>" : "\n<span foreground='{}'>no config found \xc2\xb7 showing built-in defaults</span>", palette.warning
++          "\n<span foreground='{}'>nenhuma configuração encontrada \xc2\xb7 exibindo padrões</span>", palette.warning
        );
        titleMarkup += std::format(
 -          "\n<span foreground='{}'>copy examples/config.toml to ~/.config/umbriel/config.toml</span>", palette.textMuted
-+          pt ? "\n<span foreground='{}'>copie /usr/share/umbriel/config.toml para ~/.config/umbriel/config.toml</span>" : "\n<span foreground='{}'>copy /usr/share/umbriel/config.toml to ~/.config/umbriel/config.toml</span>", palette.textMuted
++          "\n<span foreground='{}'>copie /usr/share/umbriel/config.toml para ~/.config/umbriel/config.toml</span>", palette.textMuted
        );
      }
-     const std::string footerMarkup = std::format(
+-    const std::string footerMarkup = std::format(
 -        "<span foreground='{}'>Mod = {} \xc2\xb7 press any key to close</span>", palette.textMuted, modKeyName
-+        pt ? "<span foreground='{}'>Mod = {} \xc2\xb7 pressione qualquer tecla para fechar</span>" : "<span foreground='{}'>Mod = {} \xc2\xb7 press any key to close</span>", palette.textMuted, modKeyName
-     );
+-    );
++    const std::string footerMarkup = pt ? std::format("<span foreground='{}'>Mod = {} \xc2\xb7 pressione qualquer tecla para fechar</span>", palette.textMuted, modKeyName) : std::format("<span foreground='{}'>Mod = {} \xc2\xb7 press any key to close</span>", palette.textMuted, modKeyName);
  
      const auto render = [scale](std::string markup) {
 diff --git a/src/scene/cheatsheet_rows.cpp b/src/scene/cheatsheet_rows.cpp
@@ -216,7 +216,7 @@ index 72eef74..74700c8 100644
 -        ? std::string(hasError ? "Configuration error" : "Configuration warning")
 -        : std::format("{} configuration {}", total, hasError ? "problems" : "warnings");
 +        ? std::string(pt ? (hasError ? "Erro de configuração" : "Aviso de configuração") : (hasError ? "Configuration error" : "Configuration warning"))
-+        : std::format(pt ? "{} {} de configuração" : "{} configuration {}", total, pt ? (hasError ? "problemas" : "avisos") : (hasError ? "problems" : "warnings"));
++        : (pt ? std::format("{} {} de configuração", total, hasError ? "problemas" : "avisos") : std::format("{} configuration {}", total, hasError ? "problems" : "warnings"));
  
      // Build pango markup: heading, a blank spacer, one bulleted entry per
      // diagnostic, then a muted footer.
@@ -228,7 +228,7 @@ index 72eef74..74700c8 100644
 +    bool pt2 = (lang2 && strncmp(lang2, "pt", 2) == 0);
      if (total > shown) {
 -      footer += std::format("+{} more \xc2\xb7 ", total - shown);
-+      footer += std::format(pt2 ? "+{} mais \xc2\xb7 " : "+{} more \xc2\xb7 ", total - shown);
++      footer += pt2 ? std::format("+{} mais \xc2\xb7 ", total - shown) : std::format("+{} more \xc2\xb7 ", total - shown);
      }
      footer +=
 -        hasError ? "configuration not applied \xc2\xb7 run `umbriel config validate`" : "run `umbriel config validate`";
