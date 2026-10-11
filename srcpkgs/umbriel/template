@@ -35,3 +35,9 @@ post_install() {
 	vdoc README.md
 	vdoc PACKAGING.md
 }
+
+post_patch() {
+	sed -i '1i#include <cstdlib>\n#include <cstring>' src/scene/cheatsheet.cpp
+	sed -i '1i#include <cstdlib>\n#include <cstring>' src/scene/config_banner.cpp
+	sed -i '1i#include <cstdlib>\n#include <cstring>' src/scene/quit_confirm.cpp
+}

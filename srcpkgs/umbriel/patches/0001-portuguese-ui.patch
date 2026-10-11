@@ -41,6 +41,8 @@ index a9d745d..472eead 100644
    }
  
 +  std::string_view localizedActionName(umbriel::KeybindAction action, std::string_view fallback) {
++    const char* lang = getenv("LANG");
++    if (!lang || strncmp(lang, "pt", 2) != 0) return fallback;
 +    using A = umbriel::KeybindAction;
 +    switch (action) {
 +    case A::WindowClose: return "Fechar janela";
@@ -160,35 +162,37 @@ index a9d745d..472eead 100644
        switch (spec.argKind) {
        case umbriel::ActionArgKind::None:
          return name;
-@@ -293,23 +401,23 @@ namespace {
+@@ -293,23 +401,36 @@ namespace {
    const char* groupTitleImpl(Group group) {
++    const char* lang = getenv("LANG");
++    bool pt = (lang && strncmp(lang, "pt", 2) == 0);
      switch (group) {
      case Group::Apps:
 -      return "Apps";
-+      return "Aplicativos";
++      return pt ? "Aplicativos" : "Apps";
      case Group::Screencasting:
 -      return "Screencasting";
-+      return "Transmissão";
++      return pt ? "Transmissão" : "Screencasting";
      case Group::Focus:
 -      return "Focus";
-+      return "Foco";
++      return pt ? "Foco" : "Focus";
      case Group::MoveSize:
 -      return "Move & size";
-+      return "Mover & Redimensionar";
++      return pt ? "Mover & Redimensionar" : "Move & size";
      case Group::Windows:
 -      return "Windows";
-+      return "Janelas";
++      return pt ? "Janelas" : "Windows";
      case Group::Scratchpad:
        return "Scratchpad";
      case Group::Workspaces:
 -      return "Workspaces";
-+      return "Espaços de Trabalho";
++      return pt ? "Espaços de Trabalho" : "Workspaces";
      case Group::Overview:
 -      return "Overview";
-+      return "Visão Geral";
++      return pt ? "Visão Geral" : "Overview";
      case Group::System:
 -      return "System";
-+      return "Sistema";
++      return pt ? "Sistema" : "System";
      default:
        return nullptr; // submaps handled separately
      }
@@ -205,45 +209,52 @@ diff --git a/src/scene/config_banner.cpp b/src/scene/config_banner.cpp
 index 72eef74..6fb366b 100644
 --- a/src/scene/config_banner.cpp
 +++ b/src/scene/config_banner.cpp
-@@ -166,8 +166,8 @@ namespace umbriel {
+@@ -166,8 +166,10 @@ namespace umbriel {
  
      const int total = static_cast<int>(ordered.size());
++    const char* lang = getenv("LANG");
++    bool pt = (lang && strncmp(lang, "pt", 2) == 0);
      const std::string heading = total == 1
 -        ? std::string(hasError ? "Configuration error" : "Configuration warning")
 -        : std::format("{} configuration {}", total, hasError ? "problems" : "warnings");
-+        ? std::string(hasError ? "Erro de configuração" : "Aviso de configuração")
-+        : std::format("{} {} de configuração", total, hasError ? "problemas" : "avisos");
++        ? std::string(pt ? (hasError ? "Erro de configuração" : "Aviso de configuração") : (hasError ? "Configuration error" : "Configuration warning"))
++        : std::format(pt ? "{} {} de configuração" : "{} configuration {}", total, pt ? (hasError ? "problemas" : "avisos") : (hasError ? "problems" : "warnings"));
  
      // Build pango markup: heading, a blank spacer, one bulleted entry per
-     // diagnostic, then a muted footer.
-@@ -190,10 +190,10 @@ namespace umbriel {
+@@ -190,10 +190,12 @@ namespace umbriel {
  
      std::string footer;
++    const char* lang2 = getenv("LANG");
++    bool pt2 = (lang2 && strncmp(lang2, "pt", 2) == 0);
      if (total > shown) {
--      footer += std::format("+{} more \xc2\xb7 ", total - shown);
-+      footer += std::format("+{} mais \xc2\xb7 ", total - shown);
+-      footer += std::format("+{} more Â· ", total - shown);
++      footer += std::format(pt2 ? "+{} mais Â· " : "+{} more Â· ", total - shown);
      }
      footer +=
--        hasError ? "configuration not applied \xc2\xb7 run `umbriel config validate`" : "run `umbriel config validate`";
-+        hasError ? "configuração não aplicada \xc2\xb7 execute `umbriel config validate`" : "execute `umbriel config validate`";
-     markup += std::format("\n\n<span foreground='{}'>{}</span>", mutedColor, escapeMarkup(footer));
+-        hasError ? "configuration not applied Â· run `umbriel config validate`" : "run `umbriel config validate`";
++        hasError ? (pt2 ? "configuração não aplicada Â· execute `umbriel config validate`" : "configuration not applied Â· run `umbriel config validate`") : "execute `umbriel config validate`";
+     markup += std::format("
+
+<span foreground='{}'>{}</span>", mutedColor, escapeMarkup(footer));
  
      // Transparent background: the panel rect behind provides the surface.
 diff --git a/src/scene/quit_confirm.cpp b/src/scene/quit_confirm.cpp
 index 4ac538b..6a40477 100644
 --- a/src/scene/quit_confirm.cpp
 +++ b/src/scene/quit_confirm.cpp
-@@ -82,10 +82,10 @@ namespace umbriel {
+@@ -82,10 +82,12 @@ namespace umbriel {
  
      // Static strings, no user input, so no escaping needed. Transparent background: the panel rect behind provides the
      // surface. The title is sized like the cheatsheet's heading.
 -    const std::string_view heading = m_kind == Kind::SessionQuit ? "Quit Umbriel?" : "Allow screencast target changes?";
-+    const std::string_view heading = m_kind == Kind::SessionQuit ? "Sair do Umbriel?" : "Permitir alterar alvo da transmissão?";
++    const char* lang = getenv("LANG");
++    bool pt = (lang && strncmp(lang, "pt", 2) == 0);
++    const std::string_view heading = m_kind == Kind::SessionQuit ? (pt ? "Sair do Umbriel?" : "Quit Umbriel?") : (pt ? "Permitir alterar alvo da transmissão?" : "Allow screencast target changes?");
      const std::string_view detail = m_kind == Kind::SessionQuit
 -        ? "Enter confirms; any other key or click cancels"
 -        : "This can reveal another window or screen. Enter confirms; any other key or click cancels";
-+        ? "Enter confirma; qualquer outra tecla ou clique cancela"
-+        : "Isso pode revelar outra janela ou tela. Enter confirma; qualquer outra tecla ou clique cancela";
++        ? (pt ? "Enter confirma; qualquer outra tecla ou clique cancela" : "Enter confirms; any other key or click cancels")
++        : (pt ? "Isso pode revelar outra janela ou tela. Enter confirma; qualquer outra tecla ou clique cancela" : "This can reveal another window or screen. Enter confirms; any other key or click cancels");
      std::string markup =
          std::format("<span size='14pt' weight='bold' foreground='{}'>{}</span>", headingColor, heading);
      markup += std::format("\n<span foreground='{}'>{}</span>", textColor, detail);

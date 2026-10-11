@@ -1,0 +1,23 @@
+--- a/data/start-umbriel.in
++++ b/data/start-umbriel.in
+@@ -5,6 +5,21 @@
+     drs=dbus-run-session
+ fi
+ 
++CONFIG_DIR="$HOME/.config/umbriel"
++if [ ! -f "$CONFIG_DIR/config.toml" ]; then
++    mkdir -p "$CONFIG_DIR"
++    _LANG_DETECT=${LANG:-en_US.UTF-8}
++    case "$_LANG_DETECT" in
++        pt*)
++            cp /etc/skel/.config/umbriel/config_pt.toml "$CONFIG_DIR/config.toml" 2>/dev/null || true
++            ;;
++        *)
++            cp /etc/skel/.config/umbriel/config_en.toml "$CONFIG_DIR/config.toml" 2>/dev/null || true
++            ;;
++    esac
++fi
++
+ if [ -n "${MANAGERPID:-}" ] && [ "${SYSTEMD_EXEC_PID:-}" = "$$" ]; then
+   exec ${drs} @bindir@/umbriel "$@"
+ fi
