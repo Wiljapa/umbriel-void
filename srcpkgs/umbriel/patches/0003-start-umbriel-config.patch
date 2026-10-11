@@ -1,6 +1,8 @@
+diff --git a/data/start-umbriel.in b/data/start-umbriel.in
+index 96f05b9..88d009b 100644
 --- a/data/start-umbriel.in
 +++ b/data/start-umbriel.in
-@@ -6,6 +6,20 @@
+@@ -6,6 +6,20 @@ if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] &&
      drs=dbus-run-session
  fi
  
