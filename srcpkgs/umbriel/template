@@ -40,4 +40,5 @@ post_patch() {
 	sed -i '1i#include <cstdlib>\n#include <cstring>' src/scene/cheatsheet.cpp
 	sed -i '1i#include <cstdlib>\n#include <cstring>' src/scene/config_banner.cpp
 	sed -i '1i#include <cstdlib>\n#include <cstring>' src/scene/quit_confirm.cpp
+	sed -i '1i#include <cstdlib>\n#include <cstring>\n#include <string_view>\n#include <unordered_map>' src/scene/cheatsheet_rows.cpp
 }
