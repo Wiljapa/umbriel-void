@@ -1,0 +1,216 @@
+--- a/src/scene/cheatsheet_rows.cpp
++++ b/src/scene/cheatsheet_rows.cpp
+@@ -164,6 +164,195 @@
+     return workspace != nullptr ? workspaceReferenceLabel(workspace->reference) : std::string{};
+   }
+ 
++  // Nome da ação traduzido quando o LANG é pt*. A tabela é por TEXTO (o nome da
++  // ação no config), sem depender do enum KeybindAction: se o upstream renomear
++  // ou acrescentar ações o build não quebra, e o que não estiver aqui continua
++  // em inglês.
++  std::string_view localizedActionName(std::string_view name) {
++    static const bool pt = [] {
++      const char* lang = std::getenv("LANG");
++      return lang != nullptr && std::strncmp(lang, "pt", 2) == 0;
++    }();
++    if (!pt) {
++      return name;
++    }
++    static const std::unordered_map<std::string_view, std::string_view> kPortuguese = {
++        {"cheatsheet-close", "Fechar atalhos"},
++        {"cheatsheet-open", "Abrir atalhos"},
++        {"cheatsheet-toggle", "Guia de atalhos"},
++        {"column-center", "Centralizar coluna"},
++        {"column-focus-first", "Primeira coluna"},
++        {"column-focus-last", "Última coluna"},
++        {"column-focus-tab", "Focar aba"},
++        {"column-focus-tab-next", "Próxima aba"},
++        {"column-focus-tab-previous", "Aba anterior"},
++        {"column-hide-tab-bar", "Ocultar barra de abas"},
++        {"column-move-left", "Mover coluna à esquerda"},
++        {"column-move-right", "Mover coluna à direita"},
++        {"column-move-tab-next", "Mover aba seguinte"},
++        {"column-move-tab-previous", "Mover aba anterior"},
++        {"column-move-to-first", "Mover coluna ao início"},
++        {"column-move-to-last", "Mover coluna ao final"},
++        {"column-move-to-output-down", "Mover coluna para tela abaixo"},
++        {"column-move-to-output-left", "Mover coluna para tela à esquerda"},
++        {"column-move-to-output-right", "Mover coluna para tela à direita"},
++        {"column-move-to-output-up", "Mover coluna para tela acima"},
++        {"column-move-to-workspace", "Mover coluna para espaço"},
++        {"column-move-to-workspace-next", "Mover coluna para próximo espaço"},
++        {"column-move-to-workspace-previous", "Mover coluna para espaço anterior"},
++        {"column-set-display", "Exibição da coluna"},
++        {"column-show-tab-bar", "Exibir barra de abas"},
++        {"column-toggle-tab-bar", "Barra de abas"},
++        {"column-toggle-tabbed", "Modo abas"},
++        {"config-reload", "Recarregar configuração"},
++        {"dpms-off", "Desligar monitores (DPMS)"},
++        {"dpms-on", "Ligar monitores (DPMS)"},
++        {"effect-border-cycle", "Efeito de borda: percorrer"},
++        {"effect-border-reset", "Efeito de borda: restaurar"},
++        {"effect-border-set", "Efeito de borda: definir"},
++        {"effect-border-toggle", "Efeito de borda: ligar/desligar"},
++        {"effect-cursor-cycle", "Efeito do cursor: percorrer"},
++        {"effect-cursor-reset", "Efeito do cursor: restaurar"},
++        {"effect-cursor-set", "Efeito do cursor: definir"},
++        {"effect-cursor-toggle", "Efeito do cursor: ligar/desligar"},
++        {"effect-screen-cycle", "Efeito da tela: percorrer"},
++        {"effect-screen-reset", "Efeito da tela: restaurar"},
++        {"effect-screen-set", "Efeito da tela: definir"},
++        {"effect-screen-toggle", "Efeito da tela: ligar/desligar"},
++        {"effect-window-cycle", "Efeito da janela: percorrer"},
++        {"effect-window-reset", "Efeito da janela: restaurar"},
++        {"effect-window-set", "Efeito da janela: definir"},
++        {"effect-window-toggle", "Efeito da janela: ligar/desligar"},
++        {"keyboard-layout-next", "Próximo teclado"},
++        {"layout-master-count-decrease", "Diminuir janelas mestras"},
++        {"layout-master-count-increase", "Aumentar janelas mestras"},
++        {"layout-scroll-down", "Rolar layout para baixo"},
++        {"layout-scroll-drag", "Arrastar layout"},
++        {"layout-scroll-left", "Rolar layout à esquerda"},
++        {"layout-scroll-right", "Rolar layout à direita"},
++        {"layout-scroll-up", "Rolar layout para cima"},
++        {"layout-toggle-split", "Alternar divisão"},
++        {"output-disable", "Desativar tela"},
++        {"output-enable", "Ativar tela"},
++        {"output-focus-down", "Foco na tela abaixo"},
++        {"output-focus-left", "Foco na tela à esquerda"},
++        {"output-focus-next", "Próxima tela"},
++        {"output-focus-previous", "Tela anterior"},
++        {"output-focus-right", "Foco na tela à direita"},
++        {"output-focus-up", "Foco na tela acima"},
++        {"output-sdr-white", "Brilho do branco SDR"},
++        {"output-toggle", "Ativar/desativar tela"},
++        {"overview-close", "Fechar visão geral"},
++        {"overview-open", "Abrir visão geral"},
++        {"overview-toggle", "Visão geral"},
++        {"scratchpad-focus-next", "Próximo no scratchpad"},
++        {"scratchpad-toggle", "Abrir scratchpad"},
++        {"scratchpad-window-show-next", "Próxima janela do scratchpad"},
++        {"scratchpad-window-show-previous", "Janela anterior do scratchpad"},
++        {"screencast-clear", "Limpar transmissão"},
++        {"screencast-follow-output", "Seguir tela"},
++        {"screencast-follow-stop", "Parar transmissão"},
++        {"screencast-follow-window", "Seguir janela"},
++        {"screencast-set-output", "Transmitir tela"},
++        {"screencast-set-window", "Transmitir janela"},
++        {"session-quit", "Sair do Umbriel"},
++        {"shortcuts-inhibit-toggle", "Pausar atalhos"},
++        {"spawn", "Executar"},
++        {"submap", "Submapa"},
++        {"window-center", "Centralizar janela"},
++        {"window-close", "Fechar janela"},
++        {"window-consume-from-left", "Puxar janela da esquerda"},
++        {"window-consume-from-right", "Puxar janela da direita"},
++        {"window-consume-left", "Agrupar à esquerda"},
++        {"window-consume-or-expel-left", "Agrupar/expulsar à esquerda"},
++        {"window-consume-or-expel-right", "Agrupar/expulsar à direita"},
++        {"window-consume-right", "Agrupar à direita"},
++        {"window-cycle-primary-extent", "Ajustar largura"},
++        {"window-cycle-primary-extent-back", "Ajustar largura (inverso)"},
++        {"window-cycle-secondary-extent", "Ajustar altura"},
++        {"window-cycle-secondary-extent-back", "Ajustar altura (inverso)"},
++        {"window-focus", "Focar janela"},
++        {"window-focus-down", "Foco abaixo"},
++        {"window-focus-last", "Última janela"},
++        {"window-focus-left", "Foco à esquerda"},
++        {"window-focus-next", "Próxima janela"},
++        {"window-focus-or-output-down", "Foco/saída abaixo"},
++        {"window-focus-or-output-left", "Foco/saída à esquerda"},
++        {"window-focus-or-output-right", "Foco/saída à direita"},
++        {"window-focus-or-output-up", "Foco/saída acima"},
++        {"window-focus-or-workspace-down", "Foco/espaço abaixo"},
++        {"window-focus-or-workspace-up", "Foco/espaço acima"},
++        {"window-focus-previous", "Janela anterior"},
++        {"window-focus-right", "Foco à direita"},
++        {"window-focus-switch-floating", "Focar flutuante/normal"},
++        {"window-focus-up", "Foco acima"},
++        {"window-focus-warp", "Focar janela (mover cursor)"},
++        {"window-modify-height-down", "Ajustar altura para baixo"},
++        {"window-modify-height-up", "Ajustar altura para cima"},
++        {"window-modify-primary-extent", "Modificar largura"},
++        {"window-modify-secondary-extent", "Modificar altura"},
++        {"window-modify-width-left", "Ajustar largura à esquerda"},
++        {"window-modify-width-right", "Ajustar largura à direita"},
++        {"window-move-down", "Mover janela abaixo"},
++        {"window-move-left", "Mover janela à esquerda"},
++        {"window-move-or-output-down", "Mover janela/tela abaixo"},
++        {"window-move-or-output-left", "Mover janela/tela à esquerda"},
++        {"window-move-or-output-right", "Mover janela/tela à direita"},
++        {"window-move-or-output-up", "Mover janela/tela acima"},
++        {"window-move-or-workspace-down", "Mover janela/espaço abaixo"},
++        {"window-move-or-workspace-up", "Mover janela/espaço acima"},
++        {"window-move-right", "Mover janela à direita"},
++        {"window-move-to-output-down", "Mover para tela abaixo"},
++        {"window-move-to-output-left", "Mover para tela à esquerda"},
++        {"window-move-to-output-next", "Mover para próxima tela"},
++        {"window-move-to-output-previous", "Mover para tela anterior"},
++        {"window-move-to-output-right", "Mover para tela à direita"},
++        {"window-move-to-output-up", "Mover para tela acima"},
++        {"window-move-to-scratchpad", "Enviar ao scratchpad"},
++        {"window-move-to-workspace", "Mover para espaço"},
++        {"window-move-to-workspace-next", "Mover para próximo espaço"},
++        {"window-move-to-workspace-previous", "Mover para espaço anterior"},
++        {"window-move-to-workspace-silent", "Mover para espaço (silencioso)"},
++        {"window-move-to-workspace-silent-next", "Mover para próximo espaço (silencioso)"},
++        {"window-move-to-workspace-silent-previous", "Mover para espaço anterior (silencioso)"},
++        {"window-move-up", "Mover janela acima"},
++        {"window-restore-from-scratchpad", "Restaurar do scratchpad"},
++        {"window-set-primary-extent", "Definir largura"},
++        {"window-set-secondary-extent", "Definir altura"},
++        {"window-swap-down", "Trocar para baixo"},
++        {"window-swap-left", "Trocar para a esquerda"},
++        {"window-swap-next", "Trocar com próxima"},
++        {"window-swap-previous", "Trocar com anterior"},
++        {"window-swap-right", "Trocar para a direita"},
++        {"window-swap-up", "Trocar para cima"},
++        {"window-toggle-floating", "Janela flutuante"},
++        {"window-toggle-fullscreen", "Tela cheia"},
++        {"window-toggle-maximize", "Maximizar janela"},
++        {"window-toggle-maximize-to-edges", "Maximizar até bordas"},
++        {"window-toggle-pinned", "Fixar janela"},
++        {"window-toggle-scratchpad", "Enviar ao scratchpad"},
++        {"workspace-focus-last", "Último espaço"},
++        {"workspace-move-down", "Mover espaço abaixo"},
++        {"workspace-move-to-output-down", "Mover espaço para tela abaixo"},
++        {"workspace-move-to-output-left", "Mover espaço para tela à esquerda"},
++        {"workspace-move-to-output-right", "Mover espaço para tela à direita"},
++        {"workspace-move-to-output-up", "Mover espaço para tela acima"},
++        {"workspace-move-up", "Mover espaço acima"},
++        {"workspace-next", "Próximo espaço"},
++        {"workspace-previous", "Espaço anterior"},
++        {"workspace-set-layout", "Definir layout do espaço"},
++        {"workspace-swap-active-output-down", "Trocar espaço ativo com tela abaixo"},
++        {"workspace-swap-active-output-left", "Trocar espaço ativo com tela à esquerda"},
++        {"workspace-swap-active-output-next", "Trocar espaço ativo com próxima tela"},
++        {"workspace-swap-active-output-previous", "Trocar espaço ativo com tela anterior"},
++        {"workspace-swap-active-output-right", "Trocar espaço ativo com tela à direita"},
++        {"workspace-swap-active-output-up", "Trocar espaço ativo com tela acima"},
++        {"workspace-switch", "Mudar espaço"},
++    };
++    const auto it = kPortuguese.find(name);
++    return it != kPortuguese.end() ? it->second : name;
++  }
++
+   // Driven by the spec's argument kind and the bind's payload variant, so the
+   // set of parameterized actions lives in exactly one place: the spec table.
+   std::string actionLabel(const umbriel::Keybind& bind) {
+@@ -171,7 +360,7 @@
+       if (spec.action != bind.action) {
+         continue;
+       }
+-      std::string name(spec.name);
++      std::string name(localizedActionName(spec.name));
+       switch (spec.argKind) {
+       case umbriel::ActionArgKind::None:
+         return name;
+@@ -771,7 +960,7 @@
+         rows[digitIndices[0]].chord = modPrefix
+             + "1\xe2\x80\xa6"
+               "9"; // 1…9
+-        rows[digitIndices[0]].action = std::string(specName) + ": 1-9";
++        rows[digitIndices[0]].action = std::string(localizedActionName(specName)) + ": 1-9";
+         if (!rk.submapAfter.empty()) {
+           rows[digitIndices[0]].action += " \xe2\x86\x92 " + rk.submapAfter;
+         }
