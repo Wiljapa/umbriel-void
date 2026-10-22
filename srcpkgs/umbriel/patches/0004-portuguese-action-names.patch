@@ -1,6 +1,6 @@
 --- a/src/scene/cheatsheet_rows.cpp
 +++ b/src/scene/cheatsheet_rows.cpp
-@@ -164,6 +164,195 @@
+@@ -164,6 +164,198 @@
      return workspace != nullptr ? workspaceReferenceLabel(workspace->reference) : std::string{};
    }
  
@@ -127,12 +127,14 @@
 +        {"window-focus-switch-floating", "Focar flutuante/normal"},
 +        {"window-focus-up", "Foco acima"},
 +        {"window-focus-warp", "Focar janela (mover cursor)"},
++        {"window-kill", "Encerrar processo da janela"},
 +        {"window-modify-height-down", "Ajustar altura para baixo"},
 +        {"window-modify-height-up", "Ajustar altura para cima"},
 +        {"window-modify-primary-extent", "Modificar largura"},
 +        {"window-modify-secondary-extent", "Modificar altura"},
 +        {"window-modify-width-left", "Ajustar largura à esquerda"},
 +        {"window-modify-width-right", "Ajustar largura à direita"},
++        {"window-move-by", "Mover janela por pixels"},
 +        {"window-move-down", "Mover janela abaixo"},
 +        {"window-move-left", "Mover janela à esquerda"},
 +        {"window-move-or-output-down", "Mover janela/tela abaixo"},
@@ -149,6 +151,7 @@
 +        {"window-move-to-output-right", "Mover para tela à direita"},
 +        {"window-move-to-output-up", "Mover para tela acima"},
 +        {"window-move-to-scratchpad", "Enviar ao scratchpad"},
++        {"window-move-to", "Mover janela para posição"},
 +        {"window-move-to-workspace", "Mover para espaço"},
 +        {"window-move-to-workspace-next", "Mover para próximo espaço"},
 +        {"window-move-to-workspace-previous", "Mover para espaço anterior"},
@@ -196,7 +199,7 @@
    // Driven by the spec's argument kind and the bind's payload variant, so the
    // set of parameterized actions lives in exactly one place: the spec table.
    std::string actionLabel(const umbriel::Keybind& bind) {
-@@ -171,7 +360,7 @@
+@@ -171,7 +363,7 @@
        if (spec.action != bind.action) {
          continue;
        }
@@ -205,7 +208,7 @@
        switch (spec.argKind) {
        case umbriel::ActionArgKind::None:
          return name;
-@@ -771,7 +960,7 @@
+@@ -771,7 +963,7 @@
          rows[digitIndices[0]].chord = modPrefix
              + "1\xe2\x80\xa6"
                "9"; // 1…9
