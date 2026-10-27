@@ -1,47 +1,51 @@
-# Umbriel para Void Linux (x86_64)
+**🌐 Language:** **English** · [Português (BR)](README.pt-BR.md)
+
+# Umbriel for Void Linux (x86_64)
 
 [![Build and Release Umbriel](https://github.com/Wiljapa/umbriel-void/actions/workflows/build.yml/badge.svg)](https://github.com/Wiljapa/umbriel-void/actions/workflows/build.yml)
 [![Latest Release](https://img.shields.io/github/v/release/Wiljapa/umbriel-void?color=blue&label=release)](https://github.com/Wiljapa/umbriel-void/releases/latest)
 [![Void Linux](https://img.shields.io/badge/Void_Linux-x86__64-478061?logo=voidlinux&logoColor=white)](https://voidlinux.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Pacote binário pré-compilado e atualizado do compositor Wayland **[Umbriel](https://github.com/noctalia-dev/umbriel)** para **Void Linux**.
+Up-to-date, pre-built binary package of the **[Umbriel](https://github.com/noctalia-dev/umbriel)** Wayland compositor for **Void Linux**.
 
-O Umbriel é um compositor Wayland moderno construído sobre o `wlroots`, com suporte nativo a layouts *scrolling*, *dwindle* e *master*, além de shaders e animações.
+Umbriel is a modern Wayland compositor built on `wlroots`, with native support for *scrolling*, *dwindle* and *master* layouts, plus shaders and animations.
 
-Este repositório fornece a suíte oficial completa:
-- **`umbriel`**: Compositor Wayland com compatibilidade nativa para aplicativos antigos X11 (`xorg-server-xwayland`) e gerenciamento de cores ICC (`lcms2`).
-- **`xdg-desktop-portal-umbriel`**: Portal oficial com seletor de telas/janelas (`umbriel-share-picker`) para compartilhamento de tela no Discord, Google Meet e gravação no OBS Studio.
+This repository provides the complete suite:
+- **`umbriel`**: Wayland compositor with native compatibility for legacy X11 applications (`xorg-server-xwayland`) and ICC color management (`lcms2`).
+- **`xdg-desktop-portal-umbriel`**: Official portal with a screen/window picker (`umbriel-share-picker`) for screen sharing on Discord, Google Meet and recording in OBS Studio.
 
-> Ao instalar o `umbriel` pelo XBPS, o portal e os componentes de compatibilidade são instalados automaticamente como dependências!
+> When you install `umbriel` through XBPS, the portal and the compatibility components are installed automatically as dependencies!
 
-Este repositório compila automaticamente novas versões na nuvem (via GitHub Actions) todos os dias assim que surgem novos commits no repositório oficial do Umbriel.
+This repository automatically builds new versions in the cloud (via GitHub Actions) every day, as soon as new commits land in the official Umbriel repository.
+
+> **Note:** the packaged `umbriel` carries patches that translate the compositor UI and the keybind action names to Brazilian Portuguese. They only take effect when `LANG` starts with `pt`; with any other locale the interface stays in English.
 
 <p align="center">
-  <img src="assets/screenshot.png" alt="Umbriel no Void Linux com Noctalia" width="100%">
+  <img src="assets/screenshot.png" alt="Umbriel on Void Linux with Noctalia" width="100%">
 </p>
 
 ---
 
-## ⚡ Como Instalar
+## ⚡ Installation
 
-Você pode instalar o Umbriel de duas formas: como repositório nativo do Void Linux (recomendado para receber atualizações automáticas do sistema) ou via script em 1 linha.
+You can install Umbriel in two ways: as a native Void Linux repository (recommended, so you receive automatic updates from the system) or with a one-line script.
 
-### Método 1: Repositório Nativo do XBPS (Recomendado)
-Adicione o repositório nas configurações do Void Linux. Dessa forma, **sempre que você rodar `sudo xbps-install -Syu`, o Umbriel será atualizado automaticamente junto com o sistema!**
+### Method 1: Native XBPS Repository (Recommended)
+Add the repository to your Void Linux configuration. This way, **every time you run `sudo xbps-install -Syu`, Umbriel is updated together with the rest of the system!**
 
 ```bash
-# 1. Adicionar o repositório na configuração do XBPS
+# 1. Add the repository to the XBPS configuration
 echo "repository=https://wiljapa.github.io/umbriel-void" | sudo tee /etc/xbps.d/20-umbriel.conf
 
-# 2. Sincronizar e instalar (pressione 'Y' para aceitar a chave do repositório)
+# 2. Sync and install (press 'Y' to accept the repository key)
 sudo xbps-install -Syu umbriel
 ```
 
 ---
 
-### Método 2: Script em Linha Única
-Se preferir instalar sem adicionar o repositório permanente:
+### Method 2: One-Line Script
+If you prefer to install without adding the permanent repository:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/Wiljapa/umbriel-void/main/install.sh | bash
@@ -49,69 +53,69 @@ curl -sSL https://raw.githubusercontent.com/Wiljapa/umbriel-void/main/install.sh
 
 ---
 
-### Método 3: Download Manual
-Baixe o pacote `.xbps` diretamente na página de **[Releases](https://github.com/Wiljapa/umbriel-void/releases/latest)** e instale:
+### Method 3: Manual Download
+Download the `.xbps` package directly from the **[Releases](https://github.com/Wiljapa/umbriel-void/releases/latest)** page and install it:
 ```bash
 sudo xbps-install --repository=$PWD -u umbriel
 ```
 
 ---
 
-## ⚙️ Pós-Instalação: Criando seu `config.toml`
+## ⚙️ Post-Install: Creating your `config.toml`
 
-Antes de iniciar o Umbriel pela primeira vez, você deve criar a pasta de configuração no seu usuário e copiar o modelo padrão que o pacote instala:
+Before starting Umbriel for the first time, create the configuration folder in your home directory and copy the default template installed by the package:
 
 ```bash
 mkdir -p ~/.config/umbriel
 cp /usr/share/umbriel/config.toml ~/.config/umbriel/
 ```
 
-> **Dica:** Sempre que editar seu arquivo de configuração, valide se a sintaxe está correta com:
+> **Tip:** Whenever you edit your configuration file, check that the syntax is correct with:
 > ```bash
 > umbriel validate
 > ```
 
 ---
 
-## 🎨 Integração com o Noctalia Desktop Shell
+## 🎨 Noctalia Desktop Shell Integration
 
-O Umbriel foi desenhado pelos mesmos criadores do **[Noctalia Shell](https://github.com/noctalia-dev/noctalia)** (barra de status, launcher de apps, notificações, wallpaper e painéis do sistema). 
+Umbriel was designed by the same authors as **[Noctalia Shell](https://github.com/noctalia-dev/noctalia)** (status bar, app launcher, notifications, wallpaper and system panels).
 
-Após copiar seu `config.toml` como mostrado acima, configure-o para iniciar e controlar o Noctalia:
+After copying your `config.toml` as shown above, configure it to start and control Noctalia:
 
-### 1. Inicialização automática (Autostart)
-Abra o arquivo `~/.config/umbriel/config.toml` e adicione o `noctalia` e o servidor de áudio no bloco `[general]`:
+### 1. Autostart
+Open `~/.config/umbriel/config.toml` and add `noctalia` and the audio server to the `[general]` block:
 
 ```toml
 [general]
 autostart = [
-    "noctalia",        # Inicia a barra, notificações e wallpaper do Noctalia
-    "pipewire",        # Servidor de áudio
-    "wireplumber",     # Gerenciador de sessão multimídia
-    "pipewire-pulse",  # Compatibilidade com PulseAudio
+    "noctalia",        # Starts the Noctalia bar, notifications and wallpaper
+    "pipewire",        # Audio server
+    "wireplumber",     # Multimedia session manager
+    "pipewire-pulse",  # PulseAudio compatibility
 ]
 ```
 
-### 2. Atalhos para controlar o Noctalia
-No bloco `[keybinds]`, adicione atalhos para abrir o menu de aplicativos (launcher) e terminal:
+### 2. Keybinds to control Noctalia
+In the `[keybinds]` block, add shortcuts to open the application launcher and a terminal:
 
 ```toml
 [keybinds]
-# Abrir o terminal (ex: kitty, foot, alacritty)
+# Open the terminal (e.g. kitty, foot, alacritty)
 "Mod+Return" = { action = "spawn:kitty", repeat = false }
 
-# Abrir / fechar o Launcher do Noctalia ao pressionar a tecla Super (Windows)
+# Open / close the Noctalia launcher when pressing the Super (Windows) key
 "Mod" = "spawn:noctalia msg panel-toggle launcher"
 
-# Fechar janela ativa
+# Close the active window
 "Mod+Q" = { action = "window-close", repeat = false }
 
-# Sair da sessão
+# Quit the session
 "Mod+Escape" = "session-quit"
 ```
 
-### 3. Validar a configuração
-Sempre que fizer alterações no seu `config.toml`, teste a sintaxe executando:
+### 3. Validate the configuration
+Whenever you change your `config.toml`, test the syntax by running:
 
 ```bash
 umbriel validate
@@ -119,61 +123,61 @@ umbriel validate
 
 ---
 
-## 🚀 Como Iniciar o Umbriel
+## 🚀 Starting Umbriel
 
-Você pode iniciar o compositor de duas maneiras:
+You can start the compositor in two ways:
 
-- **Via TTY (Linha de comando):**
-  Faça login em um TTY limpo (ex: `Ctrl + Alt + F2`) e execute:
+- **From a TTY (command line):**
+  Log in on a clean TTY (e.g. `Ctrl + Alt + F2`) and run:
   ```bash
   start-umbriel
   ```
-  *(O `start-umbriel` configura as variáveis de ambiente necessárias do Wayland e inicia a sessão)*.
+  *(`start-umbriel` sets up the required Wayland environment variables and starts the session)*.
 
-- **Via Display Manager (Login gráfico):**
-  O pacote já instala a sessão em `/usr/share/wayland-sessions/umbriel.desktop`. Basta selecionar **Umbriel** no seu gerenciador de login (ex: SDDM, Greetd, GDM).
+- **From a Display Manager (graphical login):**
+  The package already installs the session at `/usr/share/wayland-sessions/umbriel.desktop`. Just select **Umbriel** in your login manager (e.g. SDDM, Greetd, GDM).
 
 ---
 
-## 🛠️ Compilação Manual (xbps-src)
+## 🛠️ Manual Build (xbps-src)
 
-Caso você prefira compilar o pacote localmente no seu computador em vez de usar os binários pré-compilados:
+If you prefer to build the package locally instead of using the pre-built binaries:
 
-1. Clone o repositório oficial do `void-packages`:
+1. Clone the official `void-packages` repository:
    ```bash
    git clone --depth=1 https://github.com/void-linux/void-packages.git
    cd void-packages
    ./xbps-src binary-bootstrap
    ```
 
-2. Clone este repositório e copie o template para dentro do `void-packages`:
+2. Clone this repository and copy the template into `void-packages`:
    ```bash
    git clone https://github.com/Wiljapa/umbriel-void.git /tmp/umbriel-void
    cp -r /tmp/umbriel-void/srcpkgs/umbriel srcpkgs/
    ```
 
-3. Compile e empacote:
+3. Build and package:
    ```bash
    ./xbps-src pkg umbriel
    ```
 
-4. Instale o pacote gerado:
+4. Install the generated package:
    ```bash
    sudo xbps-install --repository=hostdir/binpkgs -u umbriel
    ```
 
 ---
 
-## 🔄 Como Funciona a Automação (CI/CD)
+## 🔄 How the Automation Works (CI/CD)
 
-- **Monitoramento Diário:** O GitHub Actions roda diariamente às 04:00 UTC e verifica se o commit mais recente do [noctalia-dev/umbriel](https://github.com/noctalia-dev/umbriel) mudou.
-- **Compilação Limpa:** Se houver atualizações, um container oficial do Void Linux (`ghcr.io/void-linux/void-glibc-full`) é inicializado no GitHub Actions.
-- **Release Automatizada:** O `xbps-src` compila o compositor com suporte a `jemalloc` e dependências completas do Wayland, gerando o pacote `.xbps` e o índice `x86_64-repodata` anexados na nova Release.
+- **Daily monitoring:** GitHub Actions runs daily at 04:00 UTC and checks whether the latest commit of [noctalia-dev/umbriel](https://github.com/noctalia-dev/umbriel) has changed.
+- **Clean build:** If there are updates, an official Void Linux container (`ghcr.io/void-linux/void-glibc-full`) is started on GitHub Actions.
+- **Automated release:** `xbps-src` builds the compositor with `jemalloc` support and the full Wayland dependencies, producing the `.xbps` package and the `x86_64-repodata` index attached to the new Release.
 
 ---
 
-## 📄 Créditos e Licença
+## 📄 Credits and License
 
-- Compositor **Umbriel** desenvolvido por [noctalia-dev](https://github.com/noctalia-dev/umbriel).
-- Empacotamento mantido por [Wiljapa](https://github.com/Wiljapa).
-- Licença: **MIT**.
+- **Umbriel** compositor developed by [noctalia-dev](https://github.com/noctalia-dev/umbriel).
+- Packaging maintained by [Wiljapa](https://github.com/Wiljapa).
+- License: **MIT**.
