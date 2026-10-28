@@ -1,12 +1,12 @@
 # Template file for 'xdg-desktop-portal-umbriel'
 pkgname=xdg-desktop-portal-umbriel
-version=0.1.0git20261003
+version=0.1.0git20261028
 revision=1
 build_style=meson
 hostmakedepends="pkg-config wayland-devel glib-devel git"
 makedepends="sdbus-c++-devel pipewire-devel wayland-devel wayland-protocols
  libdrm-devel libgbm-devel cairo-devel tomlplusplus-devel json-c++
- gtk4-devel"
+ gtk4-devel libei-devel"
 depends="xdg-desktop-portal"
 short_desc="Backend of xdg-desktop-portal for Umbriel"
 maintainer="wiljp <wiljp@gmail.com>"
