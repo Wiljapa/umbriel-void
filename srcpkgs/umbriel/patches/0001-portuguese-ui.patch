@@ -100,23 +100,74 @@ diff -urp src/src/scene/config_banner.cpp src.new/src/scene/config_banner.cpp
  
      // Transparent background: the panel rect behind provides the surface.
 diff --git a/src/scene/quit_confirm.cpp b/src/scene/quit_confirm.cpp
-index d514bece..8448d523 100644
+index d931132..081175f 100644
 --- a/src/scene/quit_confirm.cpp
 +++ b/src/scene/quit_confirm.cpp
-@@ -85,18 +85,27 @@ namespace umbriel {
+@@ -95,38 +95,62 @@ namespace umbriel {
      const std::string headingColor = rgbaHex(accent);
      const std::string textColor = rgbaHex(colors.textPrimary);
  
--    const std::string_view heading = m_kind == Kind::InputEmulation ? "Allow desktop control?"
--        : m_kind == Kind::SessionQuit                               ? "Quit Umbriel?"
--                                                                    : "Allow screencast target changes?";
+-    const std::string_view heading = m_kind == Kind::InputCapture ? "Allow input capture?"
+-        : m_kind == Kind::InputEmulation                          ? "Allow desktop control?"
+-        : m_kind == Kind::SessionQuit                             ? "Quit Umbriel?"
+-                                                                  : "Allow screencast target changes?";
+-    std::string_view captureChoices = "Enter allows this capture session.\n"
+-                                      "Any other key or click denies it.";
 +    const char* lang = getenv("LANG");
 +    const bool pt = (lang && strncmp(lang, "pt", 2) == 0);
-+    const std::string_view heading = m_kind == Kind::InputEmulation
-+        ? (pt ? "Permitir controle da área de trabalho?" : "Allow desktop control?")
-+        : m_kind == Kind::SessionQuit ? (pt ? "Sair do Umbriel?" : "Quit Umbriel?")
-+                                      : (pt ? "Permitir alterar alvo da transmissão?" : "Allow screencast target changes?");
-     const std::string detail = m_kind == Kind::InputEmulation
++    const std::string_view heading = m_kind == Kind::InputCapture
++        ? (pt ? "Permitir captura de entrada?" : "Allow input capture?")
++        : m_kind == Kind::InputEmulation ? (pt ? "Permitir controle da área de trabalho?" : "Allow desktop control?")
++        : m_kind == Kind::SessionQuit    ? (pt ? "Sair do Umbriel?" : "Quit Umbriel?")
++                                         : (pt ? "Permitir alterar alvo da transmissão?" : "Allow screencast target changes?");
++    std::string_view captureChoices = pt ? "Enter permite esta sessão de captura.\n"
++                                           "Qualquer outra tecla ou clique nega."
++                                         : "Enter allows this capture session.\n"
++                                           "Any other key or click denies it.";
+     if (m_inputCapturePersistMode == 1) {
+-      captureChoices = "Enter allows once.\n"
+-                       "R remembers approval while the application runs.\n"
+-                       "Any other key or click denies it.";
++      captureChoices = pt ? "Enter permite uma vez.\n"
++                            "R lembra a aprovação enquanto o aplicativo estiver em execução.\n"
++                            "Qualquer outra tecla ou clique nega."
++                          : "Enter allows once.\n"
++                            "R remembers approval while the application runs.\n"
++                            "Any other key or click denies it.";
+     } else if (m_inputCapturePersistMode == 2) {
+-      captureChoices = "Enter allows once.\n"
+-                       "R remembers approval until you revoke it.\n"
+-                       "Any other key or click denies it.";
++      captureChoices = pt ? "Enter permite uma vez.\n"
++                            "R lembra a aprovação até você revogar.\n"
++                            "Qualquer outra tecla ou clique nega."
++                          : "Enter allows once.\n"
++                            "R remembers approval until you revoke it.\n"
++                            "Any other key or click denies it.";
+     }
+     const std::string detail = m_kind == Kind::InputCapture
+-        ? std::format(
+-              "A client requesting capture for '{}' wants to send your input to another application.\n"
+-              "The application label is supplied by the requester.\n\n"
+-              "{}\n\n"
+-              "Press Ctrl+Alt+Escape to stop capture and restore local control.",
+-              m_application, captureChoices
+-          )
++        ? (pt ? std::format(
++                    "Um cliente que solicita captura para '{}' quer enviar sua entrada para outro aplicativo.\n"
++                    "O rótulo do aplicativo é fornecido por quem solicita.\n\n"
++                    "{}\n\n"
++                    "Pressione Ctrl+Alt+Escape para parar a captura e restaurar o controle local.",
++                    m_application, captureChoices
++                )
++              : std::format(
++                    "A client requesting capture for '{}' wants to send your input to another application.\n"
++                    "The application label is supplied by the requester.\n\n"
++                    "{}\n\n"
++                    "Press Ctrl+Alt+Escape to stop capture and restore local control.",
++                    m_application, captureChoices
++                ))
+         : m_kind == Kind::InputEmulation
 -        ? std::format(
 -              "An X11 application claiming to be '{}' wants to control your pointer and keyboard.\n"
 -              "Enter allows it for this Umbriel session; any other key or click denies it.",
@@ -140,4 +191,4 @@ index d514bece..8448d523 100644
 +              : "This can reveal another window or screen. Enter confirms; any other key or click cancels");
      std::string markup =
          std::format("<span size='14pt' weight='bold' foreground='{}'>{}</span>", headingColor, heading);
-     markup += std::format("\n<span foreground='{}'>{}</span>", textColor, escapeMarkup(detail));
+     markup += std::format(

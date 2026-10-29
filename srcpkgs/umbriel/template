@@ -1,6 +1,6 @@
 # Template file for 'umbriel'
 pkgname=umbriel
-version=0.1.0git20261003
+version=0.1.0git20261028
 revision=1
 build_style=meson
 configure_args="-Dtests=disabled -Djemalloc=auto"
