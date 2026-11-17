@@ -7,7 +7,9 @@ configure_args="-Dtests=false"
 hostmakedepends="pkg-config wayland-devel glib-devel git"
 makedepends="sdbus-c++-devel pipewire-devel wayland-devel wayland-protocols
  libdrm-devel libgbm-devel cairo-devel tomlplusplus-devel json-c++
- gtk4-devel libei-devel"
+ gtk4-devel libei-devel stb libjxl-devel libwebp-devel librsvg-devel
+ libxkbcommon-devel MesaLib-devel freetype-devel fontconfig-devel
+ pango-devel harfbuzz-devel"
 depends="xdg-desktop-portal"
 short_desc="Backend of xdg-desktop-portal for Umbriel"
 maintainer="wiljp <wiljp@gmail.com>"
