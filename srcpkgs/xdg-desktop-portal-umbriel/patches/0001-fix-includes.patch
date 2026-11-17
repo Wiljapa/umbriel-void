@@ -9,14 +9,3 @@
  #include <ext-foreign-toplevel-list-v1-client-protocol.h>
  #include <ext-image-capture-source-v1-client-protocol.h>
  #include <ext-image-copy-capture-v1-client-protocol.h>
---- src/src/picker/previews.h	2026-10-11 11:19:13.496946914 +0900
-+++ src.new/src/picker/previews.h	2026-10-11 11:19:13.515795510 +0900
-@@ -1,7 +1,7 @@
- #pragma once
- 
- #include <functional>
--#include <gdk/gdk.h>
-+#include <gtk/gtk.h>
- #include <memory>
- #include <string>
- #include <vector>
